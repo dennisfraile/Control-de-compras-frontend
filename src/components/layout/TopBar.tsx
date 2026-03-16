@@ -6,6 +6,8 @@ import {
   Avatar,
   Box,
   Button,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import {
   Menu as MenuIcon,
@@ -21,6 +23,9 @@ export default function TopBar() {
   const sidebarOpen = useUIStore((state) => state.sidebarOpen);
   const toggleSidebar = useUIStore((state) => state.toggleSidebar);
   const logoutMutation = useLogout();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isXs = useMediaQuery(theme.breakpoints.down('sm'));
 
   const handleLogout = () => {
     logoutMutation.mutate();
@@ -30,12 +35,14 @@ export default function TopBar() {
     <AppBar
       position="fixed"
       sx={{
-        width: sidebarOpen ? `calc(100% - ${DRAWER_WIDTH}px)` : '100%',
-        ml: sidebarOpen ? `${DRAWER_WIDTH}px` : 0,
-        transition: (theme) =>
-          theme.transitions.create(['margin', 'width'], {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.leavingScreen,
+        width: !isMobile && sidebarOpen
+          ? `calc(100% - ${DRAWER_WIDTH}px)`
+          : '100%',
+        ml: !isMobile && sidebarOpen ? `${DRAWER_WIDTH}px` : 0,
+        transition: (t) =>
+          t.transitions.create(['margin', 'width'], {
+            easing: t.transitions.easing.sharp,
+            duration: t.transitions.duration.leavingScreen,
           }),
         bgcolor: 'white',
         color: 'text.primary',
@@ -47,14 +54,14 @@ export default function TopBar() {
           edge="start"
           color="inherit"
           onClick={toggleSidebar}
-          sx={{ mr: 2 }}
+          sx={{ mr: isMobile ? 1 : 2 }}
         >
           <MenuIcon />
         </IconButton>
 
         <Box sx={{ flexGrow: 1 }} />
 
-        <Box display="flex" alignItems="center" gap={2}>
+        <Box display="flex" alignItems="center" gap={isMobile ? 1 : 2}>
           {user && (
             <>
               <Avatar
@@ -62,9 +69,11 @@ export default function TopBar() {
                 alt={user.name}
                 sx={{ width: 32, height: 32 }}
               />
-              <Typography variant="body2" fontWeight={500}>
-                {user.name}
-              </Typography>
+              {!isXs && (
+                <Typography variant="body2" fontWeight={500}>
+                  {user.name}
+                </Typography>
+              )}
             </>
           )}
           <Button

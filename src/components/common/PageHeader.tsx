@@ -22,8 +22,10 @@ export default function PageHeader({
   return (
     <Box
       display="flex"
+      flexDirection={{ xs: 'column', sm: 'row' }}
       justifyContent="space-between"
-      alignItems="flex-start"
+      alignItems={{ xs: 'stretch', sm: 'flex-start' }}
+      gap={{ xs: 2, sm: 0 }}
       mb={3}
     >
       <Box>
@@ -36,13 +38,20 @@ export default function PageHeader({
           </Typography>
         )}
       </Box>
-      <Box display="flex" gap={1} alignItems="center">
+      <Box
+        display="flex"
+        flexDirection={{ xs: 'column', sm: 'row' }}
+        gap={1}
+        alignItems={{ xs: 'stretch', sm: 'center' }}
+      >
         {children}
         {actionLabel && onAction && (
           <Button
             variant="contained"
             startIcon={actionIcon || <AddIcon />}
             onClick={onAction}
+            fullWidth={false}
+            sx={{ width: { xs: '100%', sm: 'auto' } }}
           >
             {actionLabel}
           </Button>

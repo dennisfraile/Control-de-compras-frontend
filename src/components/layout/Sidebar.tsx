@@ -10,6 +10,8 @@ import {
   Box,
   Divider,
   Badge,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import {
   Dashboard as DashboardIcon,
@@ -43,17 +45,28 @@ const navItems: NavItem[] = [
 
 export default function Sidebar() {
   const sidebarOpen = useUIStore((state) => state.sidebarOpen);
+  const toggleSidebar = useUIStore((state) => state.toggleSidebar);
   const location = useLocation();
   const { data: lowStockItems } = useLowStock();
   const lowStockCount = lowStockItems?.length ?? 0;
 
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
+  const handleNavClick = () => {
+    if (isMobile) {
+      toggleSidebar();
+    }
+  };
+
   return (
     <Drawer
-      variant="persistent"
+      variant={isMobile ? 'temporary' : 'persistent'}
       anchor="left"
       open={sidebarOpen}
+      onClose={isMobile ? toggleSidebar : undefined}
       sx={{
-        width: sidebarOpen ? DRAWER_WIDTH : 0,
+        width: sidebarOpen && !isMobile ? DRAWER_WIDTH : 0,
         flexShrink: 0,
         '& .MuiDrawer-paper': {
           width: DRAWER_WIDTH,
@@ -80,6 +93,7 @@ export default function Sidebar() {
               <ListItemButton
                 component={NavLink}
                 to={item.path}
+                onClick={handleNavClick}
                 sx={{
                   mx: 1,
                   my: 0.5,
@@ -99,7 +113,10 @@ export default function Sidebar() {
                     item.icon
                   )}
                 </ListItemIcon>
-                <ListItemText primary={item.label} />
+                <ListItemText
+                  primary={item.label}
+                  primaryTypographyProps={{ noWrap: true }}
+                />
               </ListItemButton>
             </ListItem>
           );

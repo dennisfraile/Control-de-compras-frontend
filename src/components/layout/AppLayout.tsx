@@ -1,4 +1,4 @@
-import { Box, Toolbar } from '@mui/material';
+import { Box, Toolbar, useMediaQuery, useTheme } from '@mui/material';
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import TopBar from './TopBar';
@@ -7,6 +7,8 @@ import { DRAWER_WIDTH } from '../../utils/constants';
 
 export default function AppLayout() {
   const sidebarOpen = useUIStore((state) => state.sidebarOpen);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh' }}>
@@ -17,12 +19,14 @@ export default function AppLayout() {
         sx={{
           flexGrow: 1,
           p: 3,
-          width: sidebarOpen ? `calc(100% - ${DRAWER_WIDTH}px)` : '100%',
-          ml: sidebarOpen ? 0 : `-${DRAWER_WIDTH}px`,
-          transition: (theme) =>
-            theme.transitions.create(['margin', 'width'], {
-              easing: theme.transitions.easing.sharp,
-              duration: theme.transitions.duration.leavingScreen,
+          width: !isMobile && sidebarOpen
+            ? `calc(100% - ${DRAWER_WIDTH}px)`
+            : '100%',
+          ml: !isMobile && sidebarOpen ? 0 : isMobile ? 0 : `-${DRAWER_WIDTH}px`,
+          transition: (t) =>
+            t.transitions.create(['margin', 'width'], {
+              easing: t.transitions.easing.sharp,
+              duration: t.transitions.duration.leavingScreen,
             }),
           bgcolor: 'background.default',
         }}

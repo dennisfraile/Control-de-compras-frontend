@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Box, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField, MenuItem } from '@mui/material';
+import { Box, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField, MenuItem, useTheme, useMediaQuery } from '@mui/material';
 import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
 import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import { useForm, Controller } from 'react-hook-form';
@@ -26,6 +26,8 @@ const productSchema = z.object({
 type ProductFormData = z.infer<typeof productSchema>;
 
 export default function ProductsPage() {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { data: products, isLoading } = useProducts();
   const createProduct = useCreateProduct();
   const updateProduct = useUpdateProduct();
@@ -164,7 +166,7 @@ export default function ProductsPage() {
       />
 
       {products && products.length > 0 ? (
-        <Box sx={{ height: 600, width: '100%' }}>
+        <Box sx={{ height: { xs: 400, sm: 500, md: 600 }, width: '100%' }}>
           <DataGrid
             rows={products}
             columns={columns}
@@ -172,6 +174,7 @@ export default function ProductsPage() {
             initialState={{
               pagination: { paginationModel: { pageSize: 10 } },
             }}
+            columnVisibilityModel={{ brand: !isMobile }}
             disableRowSelectionOnClick
           />
         </Box>
@@ -234,7 +237,7 @@ export default function ProductsPage() {
                   </TextField>
                 )}
               />
-              <Box display="flex" gap={2}>
+              <Box display="flex" gap={2} sx={{ flexDirection: { xs: 'column', sm: 'row' } }}>
                 <Controller
                   name="defaultUnit"
                   control={control}

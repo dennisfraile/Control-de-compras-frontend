@@ -25,9 +25,15 @@ const theme = createTheme(
       fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
       h4: {
         fontWeight: 600,
+        '@media (max-width:600px)': {
+          fontSize: '1.5rem',
+        },
       },
       h5: {
         fontWeight: 600,
+        '@media (max-width:600px)': {
+          fontSize: '1.25rem',
+        },
       },
       h6: {
         fontWeight: 600,

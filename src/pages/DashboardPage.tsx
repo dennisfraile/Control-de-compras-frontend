@@ -1,4 +1,4 @@
-import { Grid2 as Grid, Card, CardContent, Typography, Box, Skeleton, Alert, AlertTitle } from '@mui/material';
+import { Grid2 as Grid, Card, CardContent, Typography, Box, Skeleton, Alert, AlertTitle, useTheme, useMediaQuery } from '@mui/material';
 import {
   Warning as WarningIcon,
   ShoppingCart as ShoppingCartIcon,
@@ -68,6 +68,8 @@ function StatCard({
 }
 
 export default function DashboardPage() {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { data: lowStockItems, isLoading: lowStockLoading } = useLowStock();
   const { data: summary, isLoading: summaryLoading } = usePurchaseSummary();
   const { data: shoppingList, isLoading: shoppingLoading } = useShoppingList();
@@ -131,10 +133,10 @@ export default function DashboardPage() {
           {summaryLoading ? (
             <Skeleton variant="rectangular" height={300} />
           ) : (
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer width="100%" height={isMobile ? 250 : 300}>
               <BarChart
                 data={summary?.monthlySpending ?? []}
-                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                margin={isMobile ? { top: 5, right: 10, left: 0, bottom: 5 } : { top: 5, right: 30, left: 20, bottom: 5 }}
               >
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="month" />

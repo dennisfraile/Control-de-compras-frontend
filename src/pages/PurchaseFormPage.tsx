@@ -140,7 +140,7 @@ export default function PurchaseFormPage() {
             <Typography variant="h6" gutterBottom>
               Informacion General
             </Typography>
-            <Box display="flex" gap={2} flexWrap="wrap">
+            <Box display="flex" gap={2} sx={{ flexDirection: { xs: 'column', md: 'row' }, flexWrap: 'wrap' }}>
               <Controller
                 name="storeId"
                 control={control}
@@ -151,7 +151,7 @@ export default function PurchaseFormPage() {
                     label="Tienda"
                     error={!!errors.storeId}
                     helperText={errors.storeId?.message}
-                    sx={{ minWidth: 250 }}
+                    sx={{ minWidth: { xs: 0, sm: 250 }, width: { xs: '100%', md: 'auto' } }}
                   >
                     {stores?.map((store) => (
                       <MenuItem key={store.id} value={store.id}>
@@ -185,7 +185,7 @@ export default function PurchaseFormPage() {
                   <TextField
                     {...field}
                     label="Notas"
-                    sx={{ flexGrow: 1, minWidth: 200 }}
+                    sx={{ flexGrow: 1, minWidth: { xs: 0, sm: 200 }, width: { xs: '100%', md: 'auto' } }}
                   />
                 )}
               />
@@ -221,7 +221,7 @@ export default function PurchaseFormPage() {
 
               return (
                 <Box key={field.id}>
-                  <Box display="flex" gap={2} alignItems="flex-start" mb={2} flexWrap="wrap">
+                  <Box display="flex" gap={2} alignItems="flex-start" mb={2} sx={{ flexDirection: { xs: 'column', sm: 'row' }, flexWrap: 'wrap' }}>
                     <Controller
                       name={`items.${index}.productId`}
                       control={control}
@@ -232,7 +232,7 @@ export default function PurchaseFormPage() {
                           label="Producto"
                           error={!!errors.items?.[index]?.productId}
                           helperText={errors.items?.[index]?.productId?.message}
-                          sx={{ minWidth: 200, flexGrow: 1 }}
+                          sx={{ minWidth: { xs: 0, sm: 200 }, flexGrow: 1, width: { xs: '100%', sm: 'auto' } }}
                           size="small"
                         >
                           {products?.map((p) => (
@@ -253,7 +253,7 @@ export default function PurchaseFormPage() {
                           label="Cantidad"
                           error={!!errors.items?.[index]?.quantity}
                           helperText={errors.items?.[index]?.quantity?.message}
-                          sx={{ width: 120 }}
+                          sx={{ width: { xs: '100%', sm: 120 } }}
                           size="small"
                         />
                       )}
@@ -268,7 +268,7 @@ export default function PurchaseFormPage() {
                           label="Precio Unitario"
                           error={!!errors.items?.[index]?.unitPrice}
                           helperText={errors.items?.[index]?.unitPrice?.message}
-                          sx={{ width: 150 }}
+                          sx={{ width: { xs: '100%', sm: 150 } }}
                           size="small"
                         />
                       )}
@@ -305,7 +305,7 @@ export default function PurchaseFormPage() {
           </CardContent>
         </Card>
 
-        <Box display="flex" gap={2} justifyContent="flex-end">
+        <Box display="flex" gap={2} justifyContent="flex-end" sx={{ flexDirection: { xs: 'column-reverse', sm: 'row' } }}>
           <Button variant="outlined" onClick={() => navigate('/purchases')}>
             Cancelar
           </Button>

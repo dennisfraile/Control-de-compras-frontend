@@ -1,4 +1,4 @@
-import { Box, Button, Chip } from '@mui/material';
+import { Box, Button, Chip, useTheme, useMediaQuery } from '@mui/material';
 import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
 import { Edit as EditIcon, Delete as DeleteIcon, Visibility as ViewIcon, FileDownload as FileDownloadIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
@@ -13,6 +13,8 @@ import { Purchase } from '../types/purchase.types';
 import { formatCurrency, formatDate } from '../utils/format';
 
 export default function PurchasesPage() {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const navigate = useNavigate();
   const { data: purchases, isLoading } = usePurchases();
   const deletePurchase = useDeletePurchase();
@@ -90,7 +92,7 @@ export default function PurchasesPage() {
       field: 'actions',
       type: 'actions',
       headerName: 'Acciones',
-      width: 130,
+      width: isMobile ? 80 : 130,
       getActions: (params) => [
         <GridActionsCellItem
           icon={<ViewIcon />}
@@ -135,7 +137,7 @@ export default function PurchasesPage() {
       </PageHeader>
 
       {purchases && purchases.length > 0 ? (
-        <Box sx={{ height: 600, width: '100%' }}>
+        <Box sx={{ height: { xs: 400, sm: 500, md: 600 }, width: '100%' }}>
           <DataGrid
             rows={purchases}
             columns={columns}
@@ -144,6 +146,7 @@ export default function PurchasesPage() {
               pagination: { paginationModel: { pageSize: 10 } },
               sorting: { sortModel: [{ field: 'purchaseDate', sort: 'desc' }] },
             }}
+            columnVisibilityModel={{ items: !isMobile }}
             disableRowSelectionOnClick
           />
         </Box>

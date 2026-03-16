@@ -1,4 +1,4 @@
-import { Box } from '@mui/material';
+import { Box, useTheme, useMediaQuery } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import PageHeader from '../components/common/PageHeader';
 import LoadingSpinner from '../components/common/LoadingSpinner';
@@ -8,6 +8,8 @@ import { PriceSuggestion } from '../types/price.types';
 import { formatCurrency, formatDateTime } from '../utils/format';
 
 export default function CommunityPricesPage() {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { data: prices, isLoading } = useCommunityPrices();
 
   const columns: GridColDef[] = [
@@ -15,19 +17,19 @@ export default function CommunityPricesPage() {
       field: 'productName',
       headerName: 'Producto',
       flex: 1,
-      minWidth: 150,
+      minWidth: isMobile ? 100 : 150,
     },
     {
       field: 'storeName',
       headerName: 'Tienda',
       flex: 1,
-      minWidth: 150,
+      minWidth: isMobile ? 100 : 150,
     },
     {
       field: 'price',
       headerName: 'Precio',
       flex: 0.7,
-      minWidth: 120,
+      minWidth: isMobile ? 80 : 120,
       type: 'number',
       renderCell: (params) => formatCurrency(params.value),
     },
@@ -35,7 +37,7 @@ export default function CommunityPricesPage() {
       field: 'reportedAt',
       headerName: 'Reportado',
       flex: 0.8,
-      minWidth: 150,
+      minWidth: isMobile ? 110 : 150,
       valueGetter: (_value: string, row: PriceSuggestion) => formatDateTime(row.reportedAt),
     },
   ];
@@ -50,7 +52,7 @@ export default function CommunityPricesPage() {
       />
 
       {prices && prices.length > 0 ? (
-        <Box sx={{ height: 600, width: '100%' }}>
+        <Box sx={{ height: { xs: 400, sm: 500, md: 600 }, width: '100%' }}>
           <DataGrid
             rows={prices}
             columns={columns}

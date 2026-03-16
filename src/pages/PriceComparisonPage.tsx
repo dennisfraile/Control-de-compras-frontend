@@ -7,6 +7,8 @@ import {
   MenuItem,
   Typography,
   Button,
+  useTheme,
+  useMediaQuery,
 } from '@mui/material';
 import {
   LineChart,
@@ -38,6 +40,8 @@ const CHART_COLORS = [
 ];
 
 export default function PriceComparisonPage() {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const navigate = useNavigate();
   const { data: products, isLoading: productsLoading } = useProducts();
   const [selectedProductId, setSelectedProductId] = useState('');
@@ -93,7 +97,7 @@ export default function PriceComparisonPage() {
             label="Selecciona un producto"
             value={selectedProductId}
             onChange={(e) => setSelectedProductId(e.target.value)}
-            sx={{ minWidth: 300 }}
+            sx={{ minWidth: { xs: '100%', sm: 300 } }}
           >
             <MenuItem value="">
               <em>Seleccionar...</em>
@@ -116,10 +120,10 @@ export default function PriceComparisonPage() {
               <Typography variant="h6" gutterBottom>
                 Historial de Precios
               </Typography>
-              <ResponsiveContainer width="100%" height={400}>
+              <ResponsiveContainer width="100%" height={isMobile ? 250 : 400}>
                 <LineChart
                   data={chartData}
-                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                  margin={isMobile ? { top: 5, right: 10, left: 0, bottom: 5 } : { top: 5, right: 30, left: 20, bottom: 5 }}
                 >
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="date" />

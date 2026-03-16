@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Box, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField, MenuItem, Chip } from '@mui/material';
+import { Box, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField, MenuItem, Chip, useTheme, useMediaQuery } from '@mui/material';
 import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
 import { Edit as EditIcon, Delete as DeleteIcon, FileDownload as FileDownloadIcon } from '@mui/icons-material';
 import { useForm, Controller } from 'react-hook-form';
@@ -30,6 +30,8 @@ const inventorySchema = z.object({
 type InventoryFormData = z.infer<typeof inventorySchema>;
 
 export default function InventoryPage() {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { data: inventory, isLoading } = useInventory();
   const { data: products } = useProducts();
   const createEntry = useCreateInventoryEntry();
@@ -213,7 +215,7 @@ export default function InventoryPage() {
       </PageHeader>
 
       {inventory && inventory.length > 0 ? (
-        <Box sx={{ height: 600, width: '100%' }}>
+        <Box sx={{ height: { xs: 400, sm: 500, md: 600 }, width: '100%' }}>
           <DataGrid
             rows={inventory}
             columns={columns}
@@ -221,6 +223,7 @@ export default function InventoryPage() {
             initialState={{
               pagination: { paginationModel: { pageSize: 10 } },
             }}
+            columnVisibilityModel={{ expirationDate: !isMobile }}
             disableRowSelectionOnClick
             getRowClassName={(params) =>
               params.row.isLowStock ? 'low-stock-row' : ''
@@ -272,7 +275,7 @@ export default function InventoryPage() {
                   </TextField>
                 )}
               />
-              <Box display="flex" gap={2}>
+              <Box display="flex" gap={2} sx={{ flexDirection: { xs: 'column', sm: 'row' } }}>
                 <Controller
                   name="currentStock"
                   control={control}

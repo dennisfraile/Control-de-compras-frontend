@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Box, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField } from '@mui/material';
+import { Box, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField, useTheme, useMediaQuery } from '@mui/material';
 import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
 import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import { useForm, Controller } from 'react-hook-form';
@@ -24,6 +24,8 @@ const storeSchema = z.object({
 type StoreFormData = z.infer<typeof storeSchema>;
 
 export default function StoresPage() {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { data: stores, isLoading } = useStores();
   const createStore = useCreateStore();
   const updateStore = useUpdateStore();
@@ -141,7 +143,7 @@ export default function StoresPage() {
       />
 
       {stores && stores.length > 0 ? (
-        <Box sx={{ height: 600, width: '100%' }}>
+        <Box sx={{ height: { xs: 400, sm: 500, md: 600 }, width: '100%' }}>
           <DataGrid
             rows={stores}
             columns={columns}
@@ -149,6 +151,7 @@ export default function StoresPage() {
             initialState={{
               pagination: { paginationModel: { pageSize: 10 } },
             }}
+            columnVisibilityModel={{ address: !isMobile, city: !isMobile }}
             disableRowSelectionOnClick
           />
         </Box>
@@ -191,7 +194,7 @@ export default function StoresPage() {
                   <TextField {...field} label="Direccion" fullWidth />
                 )}
               />
-              <Box display="flex" gap={2}>
+              <Box display="flex" gap={2} sx={{ flexDirection: { xs: 'column', sm: 'row' } }}>
                 <Controller
                   name="city"
                   control={control}

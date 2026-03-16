@@ -128,8 +128,8 @@ export default function ShoppingListPage() {
                         </ListItemIcon>
                         <ListItemText
                           primary={
-                            <Box display="flex" alignItems="center" gap={1}>
-                              <Typography>
+                            <Box display="flex" alignItems="center" gap={1} sx={{ flexWrap: 'wrap' }}>
+                              <Typography sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: { xs: 150, sm: 300, md: 'none' } }}>
                                 {item.product?.name ?? 'Producto'} x{item.suggestedQuantity}
                               </Typography>
                               <Chip
