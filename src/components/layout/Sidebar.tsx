@@ -77,10 +77,15 @@ export default function Sidebar() {
       }}
     >
       <Toolbar>
-        <Box display="flex" alignItems="center" gap={1}>
-          <ShoppingCartIcon />
+        <Box display="flex" alignItems="center" gap={1.5}>
+          <Box
+            component="img"
+            src="/logo.png"
+            alt="FraileDev"
+            sx={{ width: 36, height: 36 }}
+          />
           <Typography variant="h6" noWrap fontWeight="bold">
-            Control Compras
+            Compras
           </Typography>
         </Box>
       </Toolbar>

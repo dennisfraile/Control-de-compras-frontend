@@ -8,25 +8,25 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['vite.svg'],
+      includeAssets: ['favicon.ico', 'logo.png'],
       manifest: {
-        name: 'Control de Compras',
+        name: 'Control de Compras - FraileDev',
         short_name: 'Compras',
         description: 'Aplicación para el control y seguimiento de compras del hogar',
         theme_color: '#1976d2',
-        background_color: '#ffffff',
+        background_color: '#2d2d2d',
         display: 'standalone',
         start_url: '/',
         icons: [
           {
-            src: 'icon-192x192.svg',
+            src: 'icon-192x192.png',
             sizes: '192x192',
-            type: 'image/svg+xml',
+            type: 'image/png',
           },
           {
-            src: 'icon-512x512.svg',
+            src: 'icon-512x512.png',
             sizes: '512x512',
-            type: 'image/svg+xml',
+            type: 'image/png',
             purpose: 'any maskable',
           },
         ],
