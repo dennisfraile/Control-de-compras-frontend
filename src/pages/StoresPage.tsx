@@ -13,7 +13,7 @@ import { useStores, useCreateStore, useUpdateStore, useDeleteStore } from '../ho
 import { Store, CreateStoreDto } from '../types/store.types';
 
 const storeSchema = z.object({
-  name: z.string().min(1, 'El nombre es requerido'),
+  name: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),
   address: z.string().optional(),
   city: z.string().optional(),
   phone: z.string().optional(),

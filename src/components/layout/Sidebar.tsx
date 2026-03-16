@@ -9,6 +9,7 @@ import {
   Typography,
   Box,
   Divider,
+  Badge,
 } from '@mui/material';
 import {
   Dashboard as DashboardIcon,
@@ -21,6 +22,7 @@ import {
 } from '@mui/icons-material';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useUIStore } from '../../stores/ui.store';
+import { useLowStock } from '../../hooks/useInventory';
 import { DRAWER_WIDTH } from '../../utils/constants';
 
 interface NavItem {
@@ -42,6 +44,8 @@ const navItems: NavItem[] = [
 export default function Sidebar() {
   const sidebarOpen = useUIStore((state) => state.sidebarOpen);
   const location = useLocation();
+  const { data: lowStockItems } = useLowStock();
+  const lowStockCount = lowStockItems?.length ?? 0;
 
   return (
     <Drawer
@@ -87,7 +91,13 @@ export default function Sidebar() {
                 }}
               >
                 <ListItemIcon sx={{ color: 'white', minWidth: 40 }}>
-                  {item.icon}
+                  {item.path === '/inventory' && lowStockCount > 0 ? (
+                    <Badge badgeContent={lowStockCount} color="error">
+                      {item.icon}
+                    </Badge>
+                  ) : (
+                    item.icon
+                  )}
                 </ListItemIcon>
                 <ListItemText primary={item.label} />
               </ListItemButton>

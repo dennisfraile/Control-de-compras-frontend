@@ -1,6 +1,6 @@
 import { Box, Button, Chip } from '@mui/material';
 import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
-import { Edit as EditIcon, Delete as DeleteIcon, Visibility as ViewIcon } from '@mui/icons-material';
+import { Edit as EditIcon, Delete as DeleteIcon, Visibility as ViewIcon, FileDownload as FileDownloadIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import PageHeader from '../components/common/PageHeader';
@@ -8,6 +8,7 @@ import LoadingSpinner from '../components/common/LoadingSpinner';
 import EmptyState from '../components/common/EmptyState';
 import ConfirmDialog from '../components/common/ConfirmDialog';
 import { usePurchases, useDeletePurchase } from '../hooks/usePurchases';
+import { purchasesApi } from '../api/purchases.api';
 import { Purchase } from '../types/purchase.types';
 import { formatCurrency, formatDate } from '../utils/format';
 
@@ -18,6 +19,26 @@ export default function PurchasesPage() {
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [purchaseToDelete, setPurchaseToDelete] = useState<string | null>(null);
+  const [exporting, setExporting] = useState(false);
+
+  const handleExport = async () => {
+    try {
+      setExporting(true);
+      const blob = await purchasesApi.export();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'compras.xlsx';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch {
+      // Error handled silently
+    } finally {
+      setExporting(false);
+    }
+  };
 
   const handleDeleteConfirm = () => {
     if (purchaseToDelete) {
@@ -102,7 +123,16 @@ export default function PurchasesPage() {
         subtitle="Historial de compras realizadas"
         actionLabel="Nueva Compra"
         onAction={() => navigate('/purchases/new')}
-      />
+      >
+        <Button
+          variant="outlined"
+          startIcon={<FileDownloadIcon />}
+          onClick={handleExport}
+          disabled={exporting}
+        >
+          Exportar Excel
+        </Button>
+      </PageHeader>
 
       {purchases && purchases.length > 0 ? (
         <Box sx={{ height: 600, width: '100%' }}>

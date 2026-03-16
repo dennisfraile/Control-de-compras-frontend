@@ -1,4 +1,4 @@
-import { Grid2 as Grid, Card, CardContent, Typography, Box, Skeleton } from '@mui/material';
+import { Grid2 as Grid, Card, CardContent, Typography, Box, Skeleton, Alert, AlertTitle } from '@mui/material';
 import {
   Warning as WarningIcon,
   ShoppingCart as ShoppingCartIcon,
@@ -13,6 +13,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
+import { Link as RouterLink } from 'react-router-dom';
 import PageHeader from '../components/common/PageHeader';
 import { useLowStock } from '../hooks/useInventory';
 import { usePurchaseSummary } from '../hooks/usePurchases';
@@ -109,6 +110,18 @@ export default function DashboardPage() {
           />
         </Grid>
       </Grid>
+
+      {lowStockItems && lowStockItems.length > 0 && (
+        <Alert severity="warning" sx={{ mb: 3 }}>
+          <AlertTitle>Productos con stock bajo</AlertTitle>
+          {lowStockItems.slice(0, 5).map((item) => item.product?.name ?? 'Producto desconocido').join(', ')}
+          {lowStockItems.length > 5 && ` y ${lowStockItems.length - 5} mas...`}
+          {' '}
+          <RouterLink to="/inventory" style={{ fontWeight: 'bold' }}>
+            Ver inventario
+          </RouterLink>
+        </Alert>
+      )}
 
       <Card>
         <CardContent>

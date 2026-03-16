@@ -14,7 +14,7 @@ import { Product, CreateProductDto } from '../types/product.types';
 import { Category, UnitType, CategoryLabels, UnitTypeLabels } from '../utils/constants';
 
 const productSchema = z.object({
-  name: z.string().min(1, 'El nombre es requerido'),
+  name: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),
   brand: z.string().optional(),
   category: z.nativeEnum(Category, { errorMap: () => ({ message: 'Selecciona una categoria' }) }),
   defaultUnit: z.nativeEnum(UnitType, { errorMap: () => ({ message: 'Selecciona una unidad' }) }),

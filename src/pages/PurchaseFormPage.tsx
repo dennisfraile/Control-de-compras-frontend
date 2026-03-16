@@ -26,8 +26,8 @@ import { formatCurrency } from '../utils/format';
 
 const purchaseItemSchema = z.object({
   productId: z.string().min(1, 'Selecciona un producto'),
-  quantity: z.coerce.number().min(0.01, 'Cantidad requerida'),
-  unitPrice: z.coerce.number().min(0, 'Precio requerido'),
+  quantity: z.coerce.number().positive('La cantidad debe ser mayor a 0'),
+  unitPrice: z.coerce.number().positive('El precio debe ser mayor a 0'),
   notes: z.string().optional(),
 });
 

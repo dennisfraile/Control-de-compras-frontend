@@ -1,68 +1,129 @@
+import { lazy, Suspense } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
-import AppLayout from '../components/layout/AppLayout';
+import { CircularProgress, Box } from '@mui/material';
 import ProtectedRoute from '../components/auth/ProtectedRoute';
-import LoginPage from '../pages/LoginPage';
-import DashboardPage from '../pages/DashboardPage';
-import ProductsPage from '../pages/ProductsPage';
-import PurchasesPage from '../pages/PurchasesPage';
-import PurchaseFormPage from '../pages/PurchaseFormPage';
-import InventoryPage from '../pages/InventoryPage';
-import ShoppingListPage from '../pages/ShoppingListPage';
-import PriceComparisonPage from '../pages/PriceComparisonPage';
-import CommunityPricesPage from '../pages/CommunityPricesPage';
-import StoresPage from '../pages/StoresPage';
-import NotFoundPage from '../pages/NotFoundPage';
+
+const AppLayout = lazy(() => import('../components/layout/AppLayout'));
+const LoginPage = lazy(() => import('../pages/LoginPage'));
+const DashboardPage = lazy(() => import('../pages/DashboardPage'));
+const ProductsPage = lazy(() => import('../pages/ProductsPage'));
+const PurchasesPage = lazy(() => import('../pages/PurchasesPage'));
+const PurchaseFormPage = lazy(() => import('../pages/PurchaseFormPage'));
+const InventoryPage = lazy(() => import('../pages/InventoryPage'));
+const ShoppingListPage = lazy(() => import('../pages/ShoppingListPage'));
+const PriceComparisonPage = lazy(() => import('../pages/PriceComparisonPage'));
+const CommunityPricesPage = lazy(() => import('../pages/CommunityPricesPage'));
+const StoresPage = lazy(() => import('../pages/StoresPage'));
+const NotFoundPage = lazy(() => import('../pages/NotFoundPage'));
+
+const LazyFallback = (
+  <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
+    <CircularProgress />
+  </Box>
+);
+
+function SuspenseWrapper({ children }: { children: React.ReactNode }) {
+  return <Suspense fallback={LazyFallback}>{children}</Suspense>;
+}
 
 const router = createBrowserRouter([
   {
     path: '/login',
-    element: <LoginPage />,
+    element: (
+      <SuspenseWrapper>
+        <LoginPage />
+      </SuspenseWrapper>
+    ),
   },
   {
     element: <ProtectedRoute />,
     children: [
       {
-        element: <AppLayout />,
+        element: (
+          <SuspenseWrapper>
+            <AppLayout />
+          </SuspenseWrapper>
+        ),
         children: [
           {
             path: '/',
-            element: <DashboardPage />,
+            element: (
+              <SuspenseWrapper>
+                <DashboardPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/products',
-            element: <ProductsPage />,
+            element: (
+              <SuspenseWrapper>
+                <ProductsPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/purchases',
-            element: <PurchasesPage />,
+            element: (
+              <SuspenseWrapper>
+                <PurchasesPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/purchases/new',
-            element: <PurchaseFormPage />,
+            element: (
+              <SuspenseWrapper>
+                <PurchaseFormPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/purchases/:id/edit',
-            element: <PurchaseFormPage />,
+            element: (
+              <SuspenseWrapper>
+                <PurchaseFormPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/inventory',
-            element: <InventoryPage />,
+            element: (
+              <SuspenseWrapper>
+                <InventoryPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/shopping-list',
-            element: <ShoppingListPage />,
+            element: (
+              <SuspenseWrapper>
+                <ShoppingListPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/prices',
-            element: <PriceComparisonPage />,
+            element: (
+              <SuspenseWrapper>
+                <PriceComparisonPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/prices/community',
-            element: <CommunityPricesPage />,
+            element: (
+              <SuspenseWrapper>
+                <CommunityPricesPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/stores',
-            element: <StoresPage />,
+            element: (
+              <SuspenseWrapper>
+                <StoresPage />
+              </SuspenseWrapper>
+            ),
           },
         ],
       },
@@ -70,7 +131,11 @@ const router = createBrowserRouter([
   },
   {
     path: '*',
-    element: <NotFoundPage />,
+    element: (
+      <SuspenseWrapper>
+        <NotFoundPage />
+      </SuspenseWrapper>
+    ),
   },
 ]);
 

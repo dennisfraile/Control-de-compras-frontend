@@ -40,4 +40,11 @@ export const inventoryApi = {
     const response = await apiClient.get<InventoryEntry[]>('/inventory/low-stock');
     return response.data;
   },
+
+  export: async (): Promise<Blob> => {
+    const { data } = await apiClient.get('/inventory/export', {
+      responseType: 'blob',
+    });
+    return data;
+  },
 };

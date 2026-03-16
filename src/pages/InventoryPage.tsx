@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Box, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField, MenuItem, Chip } from '@mui/material';
 import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
-import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
+import { Edit as EditIcon, Delete as DeleteIcon, FileDownload as FileDownloadIcon } from '@mui/icons-material';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -16,6 +16,7 @@ import {
   useDeleteInventoryEntry,
 } from '../hooks/useInventory';
 import { useProducts } from '../hooks/useProducts';
+import { inventoryApi } from '../api/inventory.api';
 import { InventoryEntry } from '../types/inventory.types';
 import { formatDate } from '../utils/format';
 
@@ -39,6 +40,26 @@ export default function InventoryPage() {
   const [editingEntry, setEditingEntry] = useState<InventoryEntry | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [entryToDelete, setEntryToDelete] = useState<string | null>(null);
+  const [exporting, setExporting] = useState(false);
+
+  const handleExport = async () => {
+    try {
+      setExporting(true);
+      const blob = await inventoryApi.export();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'inventario.xlsx';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch {
+      // Error handled silently
+    } finally {
+      setExporting(false);
+    }
+  };
 
   const { control, handleSubmit, reset, formState: { errors } } = useForm<InventoryFormData>({
     resolver: zodResolver(inventorySchema),
@@ -180,7 +201,16 @@ export default function InventoryPage() {
         subtitle="Control de stock de tus productos"
         actionLabel="Agregar al Inventario"
         onAction={handleOpenCreate}
-      />
+      >
+        <Button
+          variant="outlined"
+          startIcon={<FileDownloadIcon />}
+          onClick={handleExport}
+          disabled={exporting}
+        >
+          Exportar Excel
+        </Button>
+      </PageHeader>
 
       {inventory && inventory.length > 0 ? (
         <Box sx={{ height: 600, width: '100%' }}>

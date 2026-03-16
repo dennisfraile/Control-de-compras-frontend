@@ -43,4 +43,15 @@ export const purchasesApi = {
     );
     return response.data;
   },
+
+  export: async (from?: string, to?: string): Promise<Blob> => {
+    const params = new URLSearchParams();
+    if (from) params.append('from', from);
+    if (to) params.append('to', to);
+    const { data } = await apiClient.get('/purchases/export', {
+      params,
+      responseType: 'blob',
+    });
+    return data;
+  },
 };
