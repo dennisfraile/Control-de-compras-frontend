@@ -1,4 +1,4 @@
-import { Box, Card, CardContent, Typography } from '@mui/material';
+import { Box, Card, CardContent, Typography, Divider } from '@mui/material';
 import { Navigate } from 'react-router-dom';
 import GoogleLoginButton from '../components/auth/GoogleLoginButton';
 import { useAuthStore } from '../stores/auth.store';
@@ -17,8 +17,7 @@ export default function LoginPage() {
       justifyContent="center"
       minHeight="100vh"
       sx={{
-        bgcolor: '#1a1a2e',
-        background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
+        background: 'linear-gradient(135deg, #dbeafe 0%, #ede9fe 50%, #e0e7ff 100%)',
       }}
     >
       <Card
@@ -26,37 +25,41 @@ export default function LoginPage() {
           maxWidth: 420,
           width: '100%',
           mx: 2,
-          borderRadius: 3,
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+          borderRadius: 4,
+          boxShadow: '0 4px 24px rgba(0, 0, 0, 0.08)',
+          border: '1px solid rgba(0,0,0,0.06)',
         }}
       >
-        <CardContent sx={{ p: { xs: 3, sm: 4 }, textAlign: 'center' }}>
+        <CardContent sx={{ p: { xs: 3, sm: 5 }, textAlign: 'center' }}>
           <Box
             component="img"
             src="/logo.png"
             alt="FraileDev Logo"
             sx={{
-              width: { xs: 120, sm: 150 },
+              width: { xs: 80, sm: 100 },
               height: 'auto',
               mx: 'auto',
-              mb: 2,
+              mb: 3,
               display: 'block',
             }}
           />
-          <Typography variant="h4" fontWeight="bold" gutterBottom>
+          <Typography variant="h5" fontWeight={700} gutterBottom>
             Control de Compras
           </Typography>
           <Typography
-            variant="body1"
+            variant="body2"
             color="text.secondary"
             mb={4}
           >
-            Administra tus compras, inventario y presupuesto de forma
-            inteligente.
+            Inicia sesion con tu cuenta de Google
           </Typography>
+
           <GoogleLoginButton />
-          <Typography variant="caption" color="text.disabled" mt={3} display="block">
-            Inicia sesión con tu cuenta de Google para continuar
+
+          <Divider sx={{ my: 3 }} />
+
+          <Typography variant="caption" color="text.disabled">
+            Al iniciar sesion, aceptas nuestros terminos y condiciones.
           </Typography>
         </CardContent>
       </Card>

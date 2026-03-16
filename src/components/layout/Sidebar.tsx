@@ -8,7 +8,6 @@ import {
   Toolbar,
   Typography,
   Box,
-  Divider,
   Badge,
   useMediaQuery,
   useTheme,
@@ -22,8 +21,9 @@ import {
   Store as StoreIcon,
   Category as CategoryIcon,
   Person as PersonIcon,
+  Groups as CommunityIcon,
 } from '@mui/icons-material';
-import { NavLink, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useUIStore } from '../../stores/ui.store';
 import { useLowStock } from '../../hooks/useInventory';
 import { DRAWER_WIDTH } from '../../utils/constants';
@@ -40,7 +40,8 @@ const navItems: NavItem[] = [
   { label: 'Compras', path: '/purchases', icon: <ShoppingCartIcon /> },
   { label: 'Inventario', path: '/inventory', icon: <InventoryIcon /> },
   { label: 'Lista de Compras', path: '/shopping-list', icon: <ListAltIcon /> },
-  { label: 'Precios', path: '/prices', icon: <TrendingUpIcon /> },
+  { label: 'Comparaci\u00f3n', path: '/prices', icon: <TrendingUpIcon /> },
+  { label: 'Comunidad', path: '/community-prices', icon: <CommunityIcon /> },
   { label: 'Tiendas', path: '/stores', icon: <StoreIcon /> },
   { label: 'Mi Perfil', path: '/profile', icon: <PersonIcon /> },
 ];
@@ -49,13 +50,15 @@ export default function Sidebar() {
   const sidebarOpen = useUIStore((state) => state.sidebarOpen);
   const toggleSidebar = useUIStore((state) => state.toggleSidebar);
   const location = useLocation();
+  const navigate = useNavigate();
   const { data: lowStockItems } = useLowStock();
   const lowStockCount = lowStockItems?.length ?? 0;
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
-  const handleNavClick = () => {
+  const handleNavClick = (path: string) => {
+    navigate(path);
     if (isMobile) {
       toggleSidebar();
     }
@@ -73,8 +76,9 @@ export default function Sidebar() {
         '& .MuiDrawer-paper': {
           width: DRAWER_WIDTH,
           boxSizing: 'border-box',
-          bgcolor: 'primary.dark',
-          color: 'white',
+          bgcolor: 'background.paper',
+          borderRight: 1,
+          borderColor: 'divider',
         },
       }}
     >
@@ -84,34 +88,44 @@ export default function Sidebar() {
             component="img"
             src="/logo.png"
             alt="FraileDev"
-            sx={{ width: 36, height: 36 }}
+            sx={{ width: 32, height: 32 }}
           />
-          <Typography variant="h6" noWrap fontWeight="bold">
-            Compras
+          <Typography
+            variant="h6"
+            noWrap
+            fontWeight={700}
+            color="text.primary"
+          >
+            Control de Compras
           </Typography>
         </Box>
       </Toolbar>
-      <Divider sx={{ borderColor: 'rgba(255,255,255,0.2)' }} />
-      <List>
+
+      <List sx={{ px: 1, mt: 1 }}>
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
           return (
-            <ListItem key={item.path} disablePadding>
+            <ListItem key={item.path} disablePadding sx={{ mb: 0.3 }}>
               <ListItemButton
-                component={NavLink}
-                to={item.path}
-                onClick={handleNavClick}
+                onClick={() => handleNavClick(item.path)}
                 sx={{
-                  mx: 1,
-                  my: 0.5,
                   borderRadius: 2,
-                  bgcolor: isActive ? 'rgba(255,255,255,0.15)' : 'transparent',
+                  py: 1,
+                  bgcolor: isActive ? 'primary.main' : 'transparent',
+                  color: isActive ? 'white' : 'text.primary',
                   '&:hover': {
-                    bgcolor: 'rgba(255,255,255,0.1)',
+                    bgcolor: isActive
+                      ? 'primary.dark'
+                      : 'action.hover',
                   },
                 }}
               >
-                <ListItemIcon sx={{ color: 'white', minWidth: 40 }}>
+                <ListItemIcon
+                  sx={{
+                    color: isActive ? 'white' : 'text.secondary',
+                    minWidth: 40,
+                  }}
+                >
                   {item.path === '/inventory' && lowStockCount > 0 ? (
                     <Badge badgeContent={lowStockCount} color="error">
                       {item.icon}
@@ -122,7 +136,11 @@ export default function Sidebar() {
                 </ListItemIcon>
                 <ListItemText
                   primary={item.label}
-                  primaryTypographyProps={{ noWrap: true }}
+                  primaryTypographyProps={{
+                    noWrap: true,
+                    fontWeight: isActive ? 600 : 400,
+                    fontSize: '0.9rem',
+                  }}
                 />
               </ListItemButton>
             </ListItem>

@@ -3,6 +3,8 @@ import {
   Warning as WarningIcon,
   ShoppingCart as ShoppingCartIcon,
   AttachMoney as MoneyIcon,
+  Inventory as InventoryIcon,
+  TrendingUp as TrendingUpIcon,
 } from '@mui/icons-material';
 import {
   BarChart,
@@ -22,41 +24,61 @@ import { formatCurrency } from '../utils/format';
 
 function StatCard({
   title,
+  subtitle,
   value,
   icon,
-  color,
+  iconBg,
+  valueColor,
   loading,
 }: {
   title: string;
+  subtitle?: string;
   value: string | number;
   icon: React.ReactNode;
-  color: string;
+  iconBg: string;
+  valueColor: string;
   loading?: boolean;
 }) {
   return (
-    <Card>
-      <CardContent>
-        <Box display="flex" alignItems="center" justifyContent="space-between">
-          <Box>
-            <Typography variant="body2" color="text.secondary">
-              {title}
-            </Typography>
+    <Card sx={{ height: '100%' }}>
+      <CardContent sx={{ p: 2.5 }}>
+        <Box display="flex" alignItems="flex-start" justifyContent="space-between">
+          <Box flex={1}>
             {loading ? (
               <Skeleton width={80} height={40} />
             ) : (
-              <Typography variant="h4" fontWeight="bold" mt={1}>
+              <Typography
+                variant="h4"
+                fontWeight={700}
+                sx={{ color: valueColor, lineHeight: 1.2 }}
+              >
                 {value}
+              </Typography>
+            )}
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              fontWeight={500}
+              mt={0.5}
+            >
+              {title}
+            </Typography>
+            {subtitle && (
+              <Typography variant="caption" color="text.disabled">
+                {subtitle}
               </Typography>
             )}
           </Box>
           <Box
             sx={{
-              bgcolor: color,
-              borderRadius: 2,
-              p: 1.5,
+              bgcolor: iconBg,
+              borderRadius: '50%',
+              width: 48,
+              height: 48,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
+              flexShrink: 0,
             }}
           >
             {icon}
@@ -83,74 +105,122 @@ export default function DashboardPage() {
         subtitle="Resumen de tu control de compras"
       />
 
-      <Grid container spacing={3} mb={4}>
-        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+      <Grid container spacing={2.5} mb={3}>
+        <Grid size={{ xs: 12, sm: 6, md: 4, lg: 2.4 }}>
           <StatCard
-            title="Productos con stock bajo"
+            title="Gasto del Mes"
+            subtitle="Total gastado este mes"
+            value={summary ? formatCurrency(summary.totalSpent) : '$0'}
+            icon={<MoneyIcon sx={{ color: 'white', fontSize: 24 }} />}
+            iconBg="#22c55e"
+            valueColor="#22c55e"
+            loading={summaryLoading}
+          />
+        </Grid>
+        <Grid size={{ xs: 12, sm: 6, md: 4, lg: 2.4 }}>
+          <StatCard
+            title="Stock Bajo"
+            subtitle="Productos por acabarse"
             value={lowStockItems?.length ?? 0}
-            icon={<WarningIcon sx={{ color: 'white', fontSize: 28 }} />}
-            color="#ef5350"
+            icon={<WarningIcon sx={{ color: 'white', fontSize: 24 }} />}
+            iconBg="#ef4444"
+            valueColor="#ef4444"
             loading={lowStockLoading}
           />
         </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+        <Grid size={{ xs: 12, sm: 6, md: 4, lg: 2.4 }}>
           <StatCard
-            title="Items en lista de compras"
+            title="Lista de Compras"
+            subtitle="Items pendientes"
             value={pendingItems}
-            icon={<ShoppingCartIcon sx={{ color: 'white', fontSize: 28 }} />}
-            color="#42a5f5"
+            icon={<ShoppingCartIcon sx={{ color: 'white', fontSize: 24 }} />}
+            iconBg="#3b82f6"
+            valueColor="#3b82f6"
             loading={shoppingLoading}
           />
         </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+        <Grid size={{ xs: 12, sm: 6, md: 4, lg: 2.4 }}>
           <StatCard
-            title="Gasto total del mes"
-            value={summary ? formatCurrency(summary.totalSpent) : '$0'}
-            icon={<MoneyIcon sx={{ color: 'white', fontSize: 28 }} />}
-            color="#66bb6a"
+            title="Inventario"
+            subtitle="Total de productos"
+            value={lowStockItems ? '...' : 0}
+            icon={<InventoryIcon sx={{ color: 'white', fontSize: 24 }} />}
+            iconBg="#8b5cf6"
+            valueColor="#8b5cf6"
+            loading={lowStockLoading}
+          />
+        </Grid>
+        <Grid size={{ xs: 12, sm: 6, md: 4, lg: 2.4 }}>
+          <StatCard
+            title="Mes Anterior"
+            subtitle="Variacion vs mes pasado"
+            value="--"
+            icon={<TrendingUpIcon sx={{ color: 'white', fontSize: 24 }} />}
+            iconBg="#f59e0b"
+            valueColor="#f59e0b"
             loading={summaryLoading}
           />
         </Grid>
       </Grid>
 
       {lowStockItems && lowStockItems.length > 0 && (
-        <Alert severity="warning" sx={{ mb: 3 }}>
-          <AlertTitle>Productos con stock bajo</AlertTitle>
+        <Alert
+          severity="warning"
+          sx={{ mb: 3, borderRadius: 3 }}
+        >
+          <AlertTitle sx={{ fontWeight: 600 }}>Productos con stock bajo</AlertTitle>
           {lowStockItems.slice(0, 5).map((item) => item.product?.name ?? 'Producto desconocido').join(', ')}
           {lowStockItems.length > 5 && ` y ${lowStockItems.length - 5} mas...`}
           {' '}
-          <RouterLink to="/inventory" style={{ fontWeight: 'bold' }}>
+          <RouterLink to="/inventory" style={{ fontWeight: 'bold', color: 'inherit' }}>
             Ver inventario
           </RouterLink>
         </Alert>
       )}
 
-      <Card>
-        <CardContent>
-          <Typography variant="h6" gutterBottom>
-            Gasto mensual
-          </Typography>
-          {summaryLoading ? (
-            <Skeleton variant="rectangular" height={300} />
-          ) : (
-            <ResponsiveContainer width="100%" height={isMobile ? 250 : 300}>
-              <BarChart
-                data={summary?.monthlySpending ?? []}
-                margin={isMobile ? { top: 5, right: 10, left: 0, bottom: 5 } : { top: 5, right: 30, left: 20, bottom: 5 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip
-                  formatter={(value: number) => formatCurrency(value)}
-                  labelFormatter={(label: string) => `Mes: ${label}`}
-                />
-                <Bar dataKey="total" fill="#1976d2" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          )}
-        </CardContent>
-      </Card>
+      <Grid container spacing={2.5}>
+        <Grid size={{ xs: 12 }}>
+          <Card>
+            <CardContent>
+              <Typography variant="h6" gutterBottom fontWeight={600}>
+                Gasto mensual
+              </Typography>
+              <Typography variant="body2" color="text.secondary" mb={2}>
+                Historial de gastos totales por mes
+              </Typography>
+              {summaryLoading ? (
+                <Skeleton variant="rectangular" height={300} sx={{ borderRadius: 2 }} />
+              ) : (
+                <ResponsiveContainer width="100%" height={isMobile ? 250 : 300}>
+                  <BarChart
+                    data={summary?.monthlySpending ?? []}
+                    margin={isMobile ? { top: 5, right: 10, left: 0, bottom: 5 } : { top: 5, right: 30, left: 20, bottom: 5 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" stroke={theme.palette.divider} />
+                    <XAxis
+                      dataKey="month"
+                      tick={{ fill: theme.palette.text.secondary, fontSize: 12 }}
+                    />
+                    <YAxis
+                      tick={{ fill: theme.palette.text.secondary, fontSize: 12 }}
+                    />
+                    <Tooltip
+                      formatter={(value: number) => formatCurrency(value)}
+                      labelFormatter={(label: string) => `Mes: ${label}`}
+                      contentStyle={{
+                        backgroundColor: theme.palette.background.paper,
+                        border: `1px solid ${theme.palette.divider}`,
+                        borderRadius: 8,
+                      }}
+                    />
+                    <Bar dataKey="total" fill="#3b82f6" radius={[6, 6, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
     </Box>
   );
 }
