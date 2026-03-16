@@ -17,8 +17,8 @@ const ProfilePage = lazy(() => import('../pages/ProfilePage'));
 const NotFoundPage = lazy(() => import('../pages/NotFoundPage'));
 
 const LazyFallback = (
-  <div className="flex justify-center items-center min-h-screen">
-    <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full spinner" />
+  <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+    <div className="text-gray-600 dark:text-gray-400">Cargando...</div>
   </div>
 );
 

@@ -10,25 +10,27 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-50">
-      <div className="bg-white rounded-2xl shadow-lg p-8 sm:p-10 max-w-md w-full mx-4 text-center animate-fade-in">
-        <img
-          src="/logo.png"
-          alt="FraileDev Logo"
-          className="w-20 sm:w-24 mx-auto mb-6"
-        />
-        <h1 className="text-xl font-bold text-gray-800 mb-2">
-          Control de Compras
-        </h1>
-        <p className="text-sm text-gray-500 mb-8">
-          Inicia sesion con tu cuenta de Google
-        </p>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md mx-4">
+        <div className="text-center mb-8">
+          <img
+            src="/logo.png"
+            alt="Logo"
+            className="h-20 w-20 mx-auto mb-4 rounded-full object-cover"
+          />
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">
+            Mis Compras
+          </h1>
+          <p className="text-gray-600">
+            Inicia sesion con tu cuenta de Google
+          </p>
+        </div>
 
-        <GoogleLoginButton />
+        <div className="flex justify-center">
+          <GoogleLoginButton />
+        </div>
 
-        <div className="border-t border-gray-200 my-6" />
-
-        <p className="text-xs text-gray-400">
+        <p className="text-center mt-6 text-sm text-gray-500">
           Al iniciar sesion, aceptas nuestros terminos y condiciones.
         </p>
       </div>

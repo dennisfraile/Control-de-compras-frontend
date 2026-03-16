@@ -11,6 +11,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import 'dayjs/locale/es';
 import { getTheme } from './theme';
 import { ThemeProvider, useThemeContext } from './context/ThemeContext';
+import ErrorBoundary from './components/ErrorBoundary';
+import OfflineIndicator from './components/OfflineIndicator';
 import router from './router';
 
 const queryClient = new QueryClient({
@@ -39,10 +41,18 @@ function AppInner() {
           autoHideDuration={3000}
         >
           <RouterProvider router={router} />
+          <OfflineIndicator />
           <ToastContainer
-            position="bottom-right"
+            position="top-right"
             autoClose={3000}
-            theme={theme}
+            hideProgressBar={false}
+            newestOnTop
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            limit={3}
           />
         </SnackbarProvider>
       </LocalizationProvider>
@@ -52,13 +62,15 @@ function AppInner() {
 
 function App() {
   return (
-    <GoogleOAuthProvider clientId={googleClientId}>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider>
-          <AppInner />
-        </ThemeProvider>
-      </QueryClientProvider>
-    </GoogleOAuthProvider>
+    <ErrorBoundary>
+      <GoogleOAuthProvider clientId={googleClientId}>
+        <QueryClientProvider client={queryClient}>
+          <ThemeProvider>
+            <AppInner />
+          </ThemeProvider>
+        </QueryClientProvider>
+      </GoogleOAuthProvider>
+    </ErrorBoundary>
   );
 }
 
