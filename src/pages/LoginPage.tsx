@@ -1,4 +1,3 @@
-import { Box, Card, CardContent, Typography, Divider } from '@mui/material';
 import { Navigate } from 'react-router-dom';
 import GoogleLoginButton from '../components/auth/GoogleLoginButton';
 import { useAuthStore } from '../stores/auth.store';
@@ -11,58 +10,28 @@ export default function LoginPage() {
   }
 
   return (
-    <Box
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
-      minHeight="100vh"
-      sx={{
-        background: 'linear-gradient(135deg, #dbeafe 0%, #ede9fe 50%, #e0e7ff 100%)',
-      }}
-    >
-      <Card
-        sx={{
-          maxWidth: 420,
-          width: '100%',
-          mx: 2,
-          borderRadius: 4,
-          boxShadow: '0 4px 24px rgba(0, 0, 0, 0.08)',
-          border: '1px solid rgba(0,0,0,0.06)',
-        }}
-      >
-        <CardContent sx={{ p: { xs: 3, sm: 5 }, textAlign: 'center' }}>
-          <Box
-            component="img"
-            src="/logo.png"
-            alt="FraileDev Logo"
-            sx={{
-              width: { xs: 80, sm: 100 },
-              height: 'auto',
-              mx: 'auto',
-              mb: 3,
-              display: 'block',
-            }}
-          />
-          <Typography variant="h5" fontWeight={700} gutterBottom>
-            Control de Compras
-          </Typography>
-          <Typography
-            variant="body2"
-            color="text.secondary"
-            mb={4}
-          >
-            Inicia sesion con tu cuenta de Google
-          </Typography>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-50">
+      <div className="bg-white rounded-2xl shadow-lg p-8 sm:p-10 max-w-md w-full mx-4 text-center animate-fade-in">
+        <img
+          src="/logo.png"
+          alt="FraileDev Logo"
+          className="w-20 sm:w-24 mx-auto mb-6"
+        />
+        <h1 className="text-xl font-bold text-gray-800 mb-2">
+          Control de Compras
+        </h1>
+        <p className="text-sm text-gray-500 mb-8">
+          Inicia sesion con tu cuenta de Google
+        </p>
 
-          <GoogleLoginButton />
+        <GoogleLoginButton />
 
-          <Divider sx={{ my: 3 }} />
+        <div className="border-t border-gray-200 my-6" />
 
-          <Typography variant="caption" color="text.disabled">
-            Al iniciar sesion, aceptas nuestros terminos y condiciones.
-          </Typography>
-        </CardContent>
-      </Card>
-    </Box>
+        <p className="text-xs text-gray-400">
+          Al iniciar sesion, aceptas nuestros terminos y condiciones.
+        </p>
+      </div>
+    </div>
   );
 }

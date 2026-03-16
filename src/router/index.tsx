@@ -1,6 +1,5 @@
 import { lazy, Suspense } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
-import { CircularProgress, Box } from '@mui/material';
 import ProtectedRoute from '../components/auth/ProtectedRoute';
 
 const AppLayout = lazy(() => import('../components/layout/AppLayout'));
@@ -18,9 +17,9 @@ const ProfilePage = lazy(() => import('../pages/ProfilePage'));
 const NotFoundPage = lazy(() => import('../pages/NotFoundPage'));
 
 const LazyFallback = (
-  <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
-    <CircularProgress />
-  </Box>
+  <div className="flex justify-center items-center min-h-screen">
+    <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full spinner" />
+  </div>
 );
 
 function SuspenseWrapper({ children }: { children: React.ReactNode }) {

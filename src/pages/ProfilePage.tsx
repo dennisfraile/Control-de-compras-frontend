@@ -1,11 +1,3 @@
-import {
-  Box,
-  Card,
-  CardContent,
-  Typography,
-  Avatar,
-  Divider,
-} from '@mui/material';
 import PageHeader from '../components/common/PageHeader';
 import { useAuthStore } from '../stores/auth.store';
 
@@ -15,36 +7,44 @@ export default function ProfilePage() {
   if (!user) return null;
 
   return (
-    <Box>
-      <PageHeader title="Mi Perfil" subtitle="Información de tu cuenta" />
+    <div>
+      <PageHeader title="Mi Perfil" subtitle="Informacion de tu cuenta" />
 
-      <Card sx={{ maxWidth: 600 }}>
-        <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
-          <Box
-            display="flex"
-            flexDirection={{ xs: 'column', sm: 'row' }}
-            alignItems={{ xs: 'center', sm: 'flex-start' }}
-            gap={3}
-            mb={3}
-          >
-            <Avatar
-              src={user.pictureUrl}
-              alt={user.displayName}
-              sx={{ width: 80, height: 80 }}
-            />
-            <Box textAlign={{ xs: 'center', sm: 'left' }}>
-              <Typography variant="h5" fontWeight="bold">
-                {user.displayName}
-              </Typography>
-              <Typography variant="body1" color="text.secondary">
-                {user.email}
-              </Typography>
-            </Box>
-          </Box>
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-8 max-w-lg mx-auto text-center animate-fade-in">
+        {user.pictureUrl ? (
+          <img
+            src={user.pictureUrl}
+            alt={user.displayName}
+            className="w-24 h-24 rounded-full mx-auto border-4 border-blue-100 dark:border-blue-900 object-cover"
+          />
+        ) : (
+          <div className="w-24 h-24 rounded-full mx-auto border-4 border-blue-100 dark:border-blue-900 bg-blue-500 flex items-center justify-center">
+            <span className="text-3xl font-bold text-white">
+              {user.displayName?.charAt(0) ?? '?'}
+            </span>
+          </div>
+        )}
 
-          <Divider />
-        </CardContent>
-      </Card>
-    </Box>
+        <h2 className="text-xl font-bold text-gray-800 dark:text-white mt-4">
+          {user.displayName}
+        </h2>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+          {user.email}
+        </p>
+
+        <div className="border-t border-gray-200 dark:border-gray-700 my-6" />
+
+        <div className="text-left space-y-3">
+          <div>
+            <p className="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider">
+              ID de usuario
+            </p>
+            <p className="text-sm text-gray-700 dark:text-gray-300 mt-1 font-mono">
+              {user.id}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

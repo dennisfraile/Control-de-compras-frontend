@@ -1,5 +1,4 @@
-import { Box, Typography, Button } from '@mui/material';
-import { Add as AddIcon } from '@mui/icons-material';
+import { Plus } from 'lucide-react';
 import { ReactNode } from 'react';
 
 interface PageHeaderProps {
@@ -20,43 +19,30 @@ export default function PageHeader({
   children,
 }: PageHeaderProps) {
   return (
-    <Box
-      display="flex"
-      flexDirection={{ xs: 'column', sm: 'row' }}
-      justifyContent="space-between"
-      alignItems={{ xs: 'stretch', sm: 'flex-start' }}
-      gap={{ xs: 2, sm: 0 }}
-      mb={3}
-    >
-      <Box>
-        <Typography variant="h4" fontWeight="bold">
+    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+      <div>
+        <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
           {title}
-        </Typography>
+        </h1>
         {subtitle && (
-          <Typography variant="body1" color="text.secondary" mt={0.5}>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
             {subtitle}
-          </Typography>
+          </p>
         )}
-      </Box>
-      <Box
-        display="flex"
-        flexDirection={{ xs: 'column', sm: 'row' }}
-        gap={1}
-        alignItems={{ xs: 'stretch', sm: 'center' }}
-      >
+      </div>
+      <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
         {children}
         {actionLabel && onAction && (
-          <Button
-            variant="contained"
-            startIcon={actionIcon || <AddIcon />}
+          <button
+            type="button"
             onClick={onAction}
-            fullWidth={false}
-            sx={{ width: { xs: '100%', sm: 'auto' } }}
+            className="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg px-4 py-2 text-sm transition-colors w-full sm:w-auto"
           >
+            {actionIcon || <Plus className="w-4 h-4" />}
             {actionLabel}
-          </Button>
+          </button>
         )}
-      </Box>
-    </Box>
+      </div>
+    </div>
   );
 }
