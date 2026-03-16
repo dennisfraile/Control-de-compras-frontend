@@ -1,10 +1,8 @@
 export interface User {
   id: string;
   email: string;
-  name: string;
-  picture?: string;
-  createdAt: string;
-  updatedAt: string;
+  displayName: string;
+  pictureUrl?: string;
 }
 
 export interface AuthResponse {
@@ -14,7 +12,7 @@ export interface AuthResponse {
 }
 
 export interface GoogleLoginRequest {
-  credential: string;
+  idToken: string;
 }
 
 export interface RefreshTokenRequest {

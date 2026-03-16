@@ -13,6 +13,7 @@ import {
   Menu as MenuIcon,
   Logout as LogoutIcon,
 } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../stores/auth.store';
 import { useUIStore } from '../../stores/ui.store';
 import { useLogout } from '../../hooks/useAuth';
@@ -23,6 +24,7 @@ export default function TopBar() {
   const sidebarOpen = useUIStore((state) => state.sidebarOpen);
   const toggleSidebar = useUIStore((state) => state.toggleSidebar);
   const logoutMutation = useLogout();
+  const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const isXs = useMediaQuery(theme.breakpoints.down('sm'));
@@ -63,18 +65,24 @@ export default function TopBar() {
 
         <Box display="flex" alignItems="center" gap={isMobile ? 1 : 2}>
           {user && (
-            <>
+            <Box
+              display="flex"
+              alignItems="center"
+              gap={1}
+              onClick={() => navigate('/profile')}
+              sx={{ cursor: 'pointer', '&:hover': { opacity: 0.8 } }}
+            >
               <Avatar
-                src={user.picture}
-                alt={user.name}
+                src={user.pictureUrl}
+                alt={user.displayName}
                 sx={{ width: 32, height: 32 }}
               />
               {!isXs && (
                 <Typography variant="body2" fontWeight={500}>
-                  {user.name}
+                  {user.displayName}
                 </Typography>
               )}
-            </>
+            </Box>
           )}
           <Button
             startIcon={<LogoutIcon />}

@@ -14,6 +14,7 @@ const ShoppingListPage = lazy(() => import('../pages/ShoppingListPage'));
 const PriceComparisonPage = lazy(() => import('../pages/PriceComparisonPage'));
 const CommunityPricesPage = lazy(() => import('../pages/CommunityPricesPage'));
 const StoresPage = lazy(() => import('../pages/StoresPage'));
+const ProfilePage = lazy(() => import('../pages/ProfilePage'));
 const NotFoundPage = lazy(() => import('../pages/NotFoundPage'));
 
 const LazyFallback = (
@@ -122,6 +123,14 @@ const router = createBrowserRouter([
             element: (
               <SuspenseWrapper>
                 <StoresPage />
+              </SuspenseWrapper>
+            ),
+          },
+          {
+            path: '/profile',
+            element: (
+              <SuspenseWrapper>
+                <ProfilePage />
               </SuspenseWrapper>
             ),
           },

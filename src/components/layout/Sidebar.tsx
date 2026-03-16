@@ -21,6 +21,7 @@ import {
   TrendingUp as TrendingUpIcon,
   Store as StoreIcon,
   Category as CategoryIcon,
+  Person as PersonIcon,
 } from '@mui/icons-material';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useUIStore } from '../../stores/ui.store';
@@ -41,6 +42,7 @@ const navItems: NavItem[] = [
   { label: 'Lista de Compras', path: '/shopping-list', icon: <ListAltIcon /> },
   { label: 'Precios', path: '/prices', icon: <TrendingUpIcon /> },
   { label: 'Tiendas', path: '/stores', icon: <StoreIcon /> },
+  { label: 'Mi Perfil', path: '/profile', icon: <PersonIcon /> },
 ];
 
 export default function Sidebar() {

@@ -33,8 +33,22 @@ export const purchasesApi = {
   },
 
   getSummary: async (): Promise<PurchaseSummary> => {
-    const response = await apiClient.get<PurchaseSummary>('/purchases/summary');
-    return response.data;
+    const response = await apiClient.get<
+      { year: number; month: number; totalSpent: number; totalPurchases: number }[]
+    >('/purchases/summary');
+    const data = response.data;
+    const totalSpent = data.reduce((sum, d) => sum + d.totalSpent, 0);
+    const totalPurchases = data.reduce((sum, d) => sum + d.totalPurchases, 0);
+    const monthlySpending = data.map((d) => ({
+      month: `${d.year}-${String(d.month).padStart(2, '0')}`,
+      total: d.totalSpent,
+    }));
+    return {
+      totalSpent,
+      totalPurchases,
+      averagePerPurchase: totalPurchases > 0 ? totalSpent / totalPurchases : 0,
+      monthlySpending,
+    };
   },
 
   getPriceHistory: async (productId: string): Promise<PriceHistory[]> => {

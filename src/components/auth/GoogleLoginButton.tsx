@@ -10,7 +10,7 @@ export default function GoogleLoginButton() {
   const handleSuccess = (credentialResponse: CredentialResponse) => {
     if (credentialResponse.credential) {
       loginMutation.mutate(
-        { credential: credentialResponse.credential },
+        { idToken: credentialResponse.credential },
         {
           onSuccess: () => {
             navigate('/', { replace: true });
