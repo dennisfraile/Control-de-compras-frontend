@@ -15,6 +15,11 @@ import {
   Users,
   Store,
   User,
+  TrendingDown,
+  ChefHat,
+  Bell,
+  Camera,
+  FileText,
 } from 'lucide-react';
 import { useAuthStore } from '../../stores/auth.store';
 import { useLogout } from '../../hooks/useAuth';
@@ -35,6 +40,11 @@ const menuItems: NavItem[] = [
   { label: 'Lista de Compras', path: '/shopping-list', icon: ClipboardList },
   { label: 'Comparacion', path: '/prices', icon: TrendingUp },
   { label: 'Comunidad', path: '/prices/community', icon: Users },
+  { label: 'Ahorro', path: '/savings', icon: TrendingDown },
+  { label: 'Recetas', path: '/recipes', icon: ChefHat },
+  { label: 'Alertas', path: '/restock-alerts', icon: Bell },
+  { label: 'Escanear Ticket', path: '/scan-receipt', icon: Camera },
+  { label: 'Plantillas', path: '/templates', icon: FileText },
   { label: 'Tiendas', path: '/stores', icon: Store },
   { label: 'Mi Perfil', path: '/profile', icon: User },
 ];

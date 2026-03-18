@@ -48,3 +48,6 @@ export const inventoryApi = {
     return data;
   },
 };
+
+export const getRestockAlerts = () => apiClient.get('/inventory/restock-alerts').then(r => r.data);
+export const getExpiringItems = (daysAhead = 7) => apiClient.get(`/inventory/expiring?daysAhead=${daysAhead}`).then(r => r.data);

@@ -14,6 +14,11 @@ const PriceComparisonPage = lazy(() => import('../pages/PriceComparisonPage'));
 const CommunityPricesPage = lazy(() => import('../pages/CommunityPricesPage'));
 const StoresPage = lazy(() => import('../pages/StoresPage'));
 const ProfilePage = lazy(() => import('../pages/ProfilePage'));
+const SavingsPage = lazy(() => import('../pages/SavingsPage'));
+const RecipesPage = lazy(() => import('../pages/RecipesPage'));
+const RestockAlertsPage = lazy(() => import('../pages/RestockAlertsPage'));
+const ScanReceiptPage = lazy(() => import('../pages/ScanReceiptPage'));
+const TemplatesPage = lazy(() => import('../pages/TemplatesPage'));
 const NotFoundPage = lazy(() => import('../pages/NotFoundPage'));
 
 const LazyFallback = (
@@ -122,6 +127,46 @@ const router = createBrowserRouter([
             element: (
               <SuspenseWrapper>
                 <StoresPage />
+              </SuspenseWrapper>
+            ),
+          },
+          {
+            path: '/savings',
+            element: (
+              <SuspenseWrapper>
+                <SavingsPage />
+              </SuspenseWrapper>
+            ),
+          },
+          {
+            path: '/recipes',
+            element: (
+              <SuspenseWrapper>
+                <RecipesPage />
+              </SuspenseWrapper>
+            ),
+          },
+          {
+            path: '/restock-alerts',
+            element: (
+              <SuspenseWrapper>
+                <RestockAlertsPage />
+              </SuspenseWrapper>
+            ),
+          },
+          {
+            path: '/scan-receipt',
+            element: (
+              <SuspenseWrapper>
+                <ScanReceiptPage />
+              </SuspenseWrapper>
+            ),
+          },
+          {
+            path: '/templates',
+            element: (
+              <SuspenseWrapper>
+                <TemplatesPage />
               </SuspenseWrapper>
             ),
           },

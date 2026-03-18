@@ -26,3 +26,6 @@ export const productsApi = {
     await apiClient.delete(`/products/${id}`);
   },
 };
+
+export const toggleFavorite = (id: string) => apiClient.post(`/products/${id}/toggle-favorite`).then(r => r.data);
+export const getFavorites = () => apiClient.get('/products/favorites').then(r => r.data);

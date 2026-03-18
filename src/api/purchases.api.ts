@@ -69,3 +69,9 @@ export const purchasesApi = {
     return data;
   },
 };
+
+export const scanReceipt = (file: File) => {
+  const formData = new FormData();
+  formData.append('file', file);
+  return apiClient.post('/purchases/scan-receipt', formData, { headers: { 'Content-Type': 'multipart/form-data' } }).then(r => r.data);
+};
