@@ -82,9 +82,9 @@ export default function InventoryPage() {
   const handleOpenEdit = (entry: InventoryEntry) => {
     reset({
       productId: entry.productId,
-      currentStock: entry.currentStock,
-      minimumStock: entry.minimumStock,
-      expirationDate: entry.expirationDate ?? '',
+      currentStock: entry.currentQuantity,
+      minimumStock: entry.minimumThreshold,
+      expirationDate: entry.expirationDateUtc ? entry.expirationDateUtc.split('T')[0] : '',
     });
     setEditingEntry(entry);
     setDialogOpen(true);
@@ -131,45 +131,51 @@ export default function InventoryPage() {
 
   const columns: GridColDef[] = [
     {
-      field: 'product',
+      field: 'productName',
       headerName: 'Producto',
       flex: 1,
       minWidth: 150,
-      valueGetter: (_value: unknown, row: InventoryEntry) => row.product?.name ?? 'N/A',
+      valueGetter: (_value: unknown, row: InventoryEntry) =>
+        row.productName ? `${row.productName}${row.productBrand ? ` (${row.productBrand})` : ''}` : 'N/A',
     },
     {
-      field: 'currentStock',
+      field: 'currentQuantity',
       headerName: 'Stock Actual',
       flex: 0.5,
       minWidth: 120,
       type: 'number',
+      valueGetter: (_value: unknown, row: InventoryEntry) =>
+        `${row.currentQuantity} ${row.unitAbbreviation ?? ''}`,
     },
     {
-      field: 'minimumStock',
+      field: 'minimumThreshold',
       headerName: 'Stock Minimo',
       flex: 0.5,
       minWidth: 120,
       type: 'number',
     },
     {
-      field: 'isLowStock',
+      field: 'estado',
       headerName: 'Estado',
       flex: 0.5,
       minWidth: 120,
-      renderCell: (params) =>
-        params.value ? (
+      renderCell: (params) => {
+        const row = params.row as InventoryEntry;
+        const isLow = row.currentQuantity <= row.minimumThreshold;
+        return isLow ? (
           <Chip label="Stock Bajo" color="error" size="small" />
         ) : (
           <Chip label="OK" color="success" size="small" />
-        ),
+        );
+      },
     },
     {
-      field: 'expirationDate',
+      field: 'expirationDateUtc',
       headerName: 'Vencimiento',
       flex: 0.7,
       minWidth: 120,
       valueGetter: (_value: string | undefined, row: InventoryEntry) =>
-        row.expirationDate ? formatDate(row.expirationDate) : 'N/A',
+        row.expirationDateUtc ? formatDate(row.expirationDateUtc) : 'N/A',
     },
     {
       field: 'actions',

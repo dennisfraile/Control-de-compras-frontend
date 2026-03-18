@@ -1,27 +1,34 @@
-import { Product } from './product.types';
-
 export interface InventoryEntry {
   id: string;
+  userId: string;
   productId: string;
-  product?: Product;
-  currentStock: number;
-  minimumStock: number;
-  lastRestocked?: string;
-  expirationDate?: string;
-  isLowStock: boolean;
-  createdAt: string;
-  updatedAt: string;
+  productName: string;
+  productBrand?: string;
+  currentQuantity: number;
+  unitTypeId: number;
+  unitAbbreviation: string;
+  minimumThreshold: number;
+  lastUpdatedUtc: string;
+  expirationDateUtc?: string;
+  // computed helpers for UI
+  product?: { name: string; brand?: string };
+  currentStock?: number;
+  minimumStock?: number;
+  isLowStock?: boolean;
 }
 
 export interface CreateInventoryEntryDto {
   productId: string;
-  currentStock: number;
-  minimumStock: number;
-  expirationDate?: string;
+  currentQuantity: number;
+  unitTypeId: number;
+  minimumThreshold: number;
+  expirationDateUtc?: string;
 }
 
 export interface UpdateInventoryEntryDto {
-  currentStock?: number;
-  minimumStock?: number;
-  expirationDate?: string;
+  productId: string;
+  currentQuantity: number;
+  unitTypeId: number;
+  minimumThreshold: number;
+  expirationDateUtc?: string;
 }

@@ -1,43 +1,40 @@
-import { Product } from './product.types';
-import { Store } from './store.types';
-
 export interface PurchaseItem {
   id: string;
   productId: string;
-  product?: Product;
+  productName: string;
   quantity: number;
+  unitTypeId: number;
+  unitAbbreviation: string;
   unitPrice: number;
   totalPrice: number;
-  notes?: string;
 }
 
 export interface Purchase {
   id: string;
+  userId: string;
   storeId: string;
-  store?: Store;
-  purchaseDate: string;
+  storeName: string;
+  purchaseDateUtc: string;
   totalAmount: number;
   notes?: string;
+  createdAtUtc: string;
   items: PurchaseItem[];
-  createdAt: string;
-  updatedAt: string;
 }
 
 export interface CreatePurchaseItemDto {
   productId: string;
   quantity: number;
+  unitTypeId: number;
   unitPrice: number;
-  notes?: string;
+  addToInventory: boolean;
 }
 
 export interface CreatePurchaseDto {
   storeId: string;
-  purchaseDate: string;
+  purchaseDateUtc: string;
   notes?: string;
   items: CreatePurchaseItemDto[];
 }
-
-export interface UpdatePurchaseDto extends Partial<CreatePurchaseDto> {}
 
 export interface PriceHistory {
   date: string;

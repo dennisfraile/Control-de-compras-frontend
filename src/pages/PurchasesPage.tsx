@@ -55,18 +55,18 @@ export default function PurchasesPage() {
 
   const columns: GridColDef[] = [
     {
-      field: 'purchaseDate',
+      field: 'purchaseDateUtc',
       headerName: 'Fecha',
       flex: 0.7,
       minWidth: 120,
-      valueGetter: (_value: string, row: Purchase) => formatDate(row.purchaseDate),
+      valueGetter: (_value: string, row: Purchase) => formatDate(row.purchaseDateUtc),
     },
     {
-      field: 'store',
+      field: 'storeName',
       headerName: 'Tienda',
       flex: 1,
       minWidth: 150,
-      valueGetter: (_value: unknown, row: Purchase) => row.store?.name ?? 'N/A',
+      valueGetter: (_value: unknown, row: Purchase) => row.storeName ?? 'N/A',
     },
     {
       field: 'items',

@@ -21,7 +21,7 @@ export const shoppingListApi = {
   },
 
   generateList: async (): Promise<ShoppingListSuggestion[]> => {
-    const response = await apiClient.post<ShoppingListSuggestion[]>(
+    const response = await apiClient.get<ShoppingListSuggestion[]>(
       '/shopping-list/generate',
     );
     return response.data;
