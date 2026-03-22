@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import {
   TrendingDown,
@@ -37,17 +38,27 @@ interface SavingsData {
 
 export default function SavingsPage() {
   const { theme } = useThemeContext();
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const { data, isLoading } = useQuery<SavingsData>({
     queryKey: ['savings'],
     queryFn: getSavingsAnalysis,
   });
 
+  const chartHeight = isMobile ? 200 : 300;
   const changeIsNegative = (data?.monthOverMonthChange ?? 0) < 0;
 
   return (
     <div>
       <PageHeader
         title="Analisis de Ahorro"
+        helpKey="savings"
         subtitle="Compara tus gastos y encuentra donde ahorrar"
       />
 
@@ -128,10 +139,10 @@ export default function SavingsPage() {
         {isLoading ? (
           <div className="animate-pulse bg-gray-200 dark:bg-gray-700 h-72 rounded-lg" />
         ) : (
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={chartHeight}>
             <BarChart
               data={data?.spendingByStore ?? []}
-              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+              margin={isMobile ? { top: 5, right: 5, left: 0, bottom: 5 } : { top: 5, right: 30, left: 20, bottom: 5 }}
             >
               <CartesianGrid
                 strokeDasharray="3 3"
@@ -180,9 +191,9 @@ export default function SavingsPage() {
                 <tr className="border-b border-gray-200 dark:border-gray-700">
                   <th className="text-left py-3 px-2 text-gray-500 dark:text-gray-400 font-medium">Producto</th>
                   <th className="text-left py-3 px-2 text-gray-500 dark:text-gray-400 font-medium">Tienda mas barata</th>
-                  <th className="text-right py-3 px-2 text-gray-500 dark:text-gray-400 font-medium">Precio bajo</th>
+                  {!isMobile && <th className="text-right py-3 px-2 text-gray-500 dark:text-gray-400 font-medium">Precio bajo</th>}
                   <th className="text-left py-3 px-2 text-gray-500 dark:text-gray-400 font-medium">Tienda mas cara</th>
-                  <th className="text-right py-3 px-2 text-gray-500 dark:text-gray-400 font-medium">Precio alto</th>
+                  {!isMobile && <th className="text-right py-3 px-2 text-gray-500 dark:text-gray-400 font-medium">Precio alto</th>}
                   <th className="text-right py-3 px-2 text-gray-500 dark:text-gray-400 font-medium">Ahorro</th>
                 </tr>
               </thead>
@@ -191,15 +202,15 @@ export default function SavingsPage() {
                   <tr key={idx} className="border-b border-gray-100 dark:border-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-700/30">
                     <td className="py-3 px-2 font-medium text-gray-800 dark:text-white">{item.productName}</td>
                     <td className="py-3 px-2 text-green-600 dark:text-green-400">{item.cheapestStore}</td>
-                    <td className="py-3 px-2 text-right text-green-600 dark:text-green-400">{formatCurrency(item.cheapestPrice)}</td>
+                    {!isMobile && <td className="py-3 px-2 text-right text-green-600 dark:text-green-400">{formatCurrency(item.cheapestPrice)}</td>}
                     <td className="py-3 px-2 text-red-500 dark:text-red-400">{item.mostExpensiveStore}</td>
-                    <td className="py-3 px-2 text-right text-red-500 dark:text-red-400">{formatCurrency(item.mostExpensivePrice)}</td>
+                    {!isMobile && <td className="py-3 px-2 text-right text-red-500 dark:text-red-400">{formatCurrency(item.mostExpensivePrice)}</td>}
                     <td className="py-3 px-2 text-right font-bold text-green-600 dark:text-green-400">{formatCurrency(item.savings)}</td>
                   </tr>
                 ))}
                 {(data?.topSavings ?? []).length === 0 && (
                   <tr>
-                    <td colSpan={6} className="py-8 text-center text-gray-500 dark:text-gray-400">
+                    <td colSpan={isMobile ? 4 : 6} className="py-8 text-center text-gray-500 dark:text-gray-400">
                       No hay datos de ahorro disponibles aun
                     </td>
                   </tr>

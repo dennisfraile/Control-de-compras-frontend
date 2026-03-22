@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { Camera, Upload, Loader2, Trash2, ShoppingCart } from 'lucide-react';
 import { toast } from 'react-toastify';
@@ -25,7 +25,14 @@ export default function ScanReceiptPage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [scanResult, setScanResult] = useState<ScanResult | null>(null);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const scanMutation = useMutation({
     mutationFn: scanReceipt,
@@ -92,10 +99,11 @@ export default function ScanReceiptPage() {
     <div>
       <PageHeader
         title="Escanear Ticket"
+        helpKey="scanReceipt"
         subtitle="Sube una foto de tu ticket de compra para registrarla automaticamente"
       />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Upload Section */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 animate-fade-in">
           <h2 className="text-lg font-bold text-gray-800 dark:text-white mb-4">
@@ -130,7 +138,7 @@ export default function ScanReceiptPage() {
                 <img
                   src={preview}
                   alt="Vista previa del ticket"
-                  className="w-full max-h-96 object-contain"
+                  className="w-full max-h-64 sm:max-h-96 object-contain"
                 />
               </div>
 
@@ -201,7 +209,7 @@ export default function ScanReceiptPage() {
                     <tr className="border-b border-gray-200 dark:border-gray-700">
                       <th className="text-left py-2 px-1 text-gray-500 dark:text-gray-400 font-medium">Producto</th>
                       <th className="text-right py-2 px-1 text-gray-500 dark:text-gray-400 font-medium">Cant.</th>
-                      <th className="text-right py-2 px-1 text-gray-500 dark:text-gray-400 font-medium">P. Unit.</th>
+                      {!isMobile && <th className="text-right py-2 px-1 text-gray-500 dark:text-gray-400 font-medium">P. Unit.</th>}
                       <th className="text-right py-2 px-1 text-gray-500 dark:text-gray-400 font-medium">Total</th>
                     </tr>
                   </thead>
@@ -210,14 +218,14 @@ export default function ScanReceiptPage() {
                       <tr key={idx} className="border-b border-gray-100 dark:border-gray-700/50">
                         <td className="py-2 px-1 text-gray-800 dark:text-white">{item.name}</td>
                         <td className="py-2 px-1 text-right text-gray-600 dark:text-gray-300">{item.quantity}</td>
-                        <td className="py-2 px-1 text-right text-gray-600 dark:text-gray-300">{formatCurrency(item.unitPrice)}</td>
+                        {!isMobile && <td className="py-2 px-1 text-right text-gray-600 dark:text-gray-300">{formatCurrency(item.unitPrice)}</td>}
                         <td className="py-2 px-1 text-right font-medium text-gray-800 dark:text-white">{formatCurrency(item.total)}</td>
                       </tr>
                     ))}
                   </tbody>
                   <tfoot>
                     <tr className="border-t-2 border-gray-300 dark:border-gray-600">
-                      <td colSpan={3} className="py-2 px-1 font-bold text-gray-800 dark:text-white">Total</td>
+                      <td colSpan={isMobile ? 2 : 3} className="py-2 px-1 font-bold text-gray-800 dark:text-white">Total</td>
                       <td className="py-2 px-1 text-right font-bold text-gray-800 dark:text-white">{formatCurrency(scanResult.total)}</td>
                     </tr>
                   </tfoot>

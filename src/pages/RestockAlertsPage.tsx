@@ -59,6 +59,7 @@ export default function RestockAlertsPage() {
     <div>
       <PageHeader
         title="Alertas de Reabastecimiento"
+        helpKey="restockAlerts"
         subtitle="Productos que necesitas comprar pronto"
       />
 

@@ -73,6 +73,7 @@ export default function DashboardPage() {
     <div>
       <PageHeader
         title="Dashboard"
+        helpKey="dashboard"
         subtitle="Resumen de tu control de compras"
       />
 

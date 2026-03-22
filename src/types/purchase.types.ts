@@ -36,6 +36,8 @@ export interface CreatePurchaseDto {
   items: CreatePurchaseItemDto[];
 }
 
+export interface UpdatePurchaseDto extends Partial<CreatePurchaseDto> {}
+
 export interface PriceHistory {
   date: string;
   price: number;

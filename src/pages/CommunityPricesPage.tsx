@@ -17,13 +17,13 @@ export default function CommunityPricesPage() {
       field: 'productName',
       headerName: 'Producto',
       flex: 1,
-      minWidth: isMobile ? 100 : 150,
+      minWidth: isMobile ? 80 : 150,
     },
     {
       field: 'storeName',
       headerName: 'Tienda',
       flex: 1,
-      minWidth: isMobile ? 100 : 150,
+      minWidth: isMobile ? 80 : 150,
     },
     {
       field: 'price',
@@ -37,7 +37,7 @@ export default function CommunityPricesPage() {
       field: 'reportedAt',
       headerName: 'Reportado',
       flex: 0.8,
-      minWidth: isMobile ? 110 : 150,
+      minWidth: isMobile ? 100 : 150,
       valueGetter: (_value: string, row: PriceSuggestion) => formatDateTime(row.reportedAt),
     },
   ];
@@ -48,11 +48,12 @@ export default function CommunityPricesPage() {
     <Box>
       <PageHeader
         title="Precios de la Comunidad"
+        helpKey="community"
         subtitle="Precios reportados anonimamente por otros usuarios"
       />
 
       {prices && prices.length > 0 ? (
-        <Box sx={{ height: { xs: 400, sm: 500, md: 600 }, width: '100%' }}>
+        <Box sx={{ height: { xs: 350, sm: 450, md: 600 }, width: '100%' }}>
           <DataGrid
             rows={prices}
             columns={columns}
@@ -61,6 +62,7 @@ export default function CommunityPricesPage() {
               pagination: { paginationModel: { pageSize: 25 } },
               sorting: { sortModel: [{ field: 'reportedAt', sort: 'desc' }] },
             }}
+            columnVisibilityModel={{ reportedAt: !isMobile }}
             disableRowSelectionOnClick
           />
         </Box>

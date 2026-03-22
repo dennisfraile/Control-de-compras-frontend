@@ -96,25 +96,31 @@ export default function InventoryPage() {
   };
 
   const onSubmit = (data: InventoryFormData) => {
-    const dto = {
-      ...data,
-      expirationDate: data.expirationDate || undefined,
-    };
-
     if (editingEntry) {
       updateEntry.mutate(
         {
           id: editingEntry.id,
           data: {
-            currentStock: dto.currentStock,
-            minimumStock: dto.minimumStock,
-            expirationDate: dto.expirationDate,
+            productId: data.productId,
+            currentQuantity: data.currentStock,
+            unitTypeId: editingEntry.unitTypeId ?? 5,
+            minimumThreshold: data.minimumStock,
+            expirationDateUtc: data.expirationDate || undefined,
           },
         },
         { onSuccess: handleClose },
       );
     } else {
-      createEntry.mutate(dto, { onSuccess: handleClose });
+      createEntry.mutate(
+        {
+          productId: data.productId,
+          currentQuantity: data.currentStock,
+          unitTypeId: 5,
+          minimumThreshold: data.minimumStock,
+          expirationDateUtc: data.expirationDate || undefined,
+        },
+        { onSuccess: handleClose },
+      );
     }
   };
 
@@ -134,15 +140,22 @@ export default function InventoryPage() {
       field: 'productName',
       headerName: 'Producto',
       flex: 1,
-      minWidth: 150,
+      minWidth: isMobile ? 100 : 150,
       valueGetter: (_value: unknown, row: InventoryEntry) =>
         row.productName ? `${row.productName}${row.productBrand ? ` (${row.productBrand})` : ''}` : 'N/A',
+      renderCell: isMobile
+        ? (params) => (
+            <Box sx={{ maxWidth: 120, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {params.value}
+            </Box>
+          )
+        : undefined,
     },
     {
       field: 'currentQuantity',
       headerName: 'Stock Actual',
       flex: 0.5,
-      minWidth: 120,
+      minWidth: isMobile ? 80 : 120,
       type: 'number',
       valueGetter: (_value: unknown, row: InventoryEntry) =>
         `${row.currentQuantity} ${row.unitAbbreviation ?? ''}`,
@@ -151,14 +164,14 @@ export default function InventoryPage() {
       field: 'minimumThreshold',
       headerName: 'Stock Minimo',
       flex: 0.5,
-      minWidth: 120,
+      minWidth: isMobile ? 80 : 120,
       type: 'number',
     },
     {
       field: 'estado',
       headerName: 'Estado',
       flex: 0.5,
-      minWidth: 120,
+      minWidth: isMobile ? 80 : 120,
       renderCell: (params) => {
         const row = params.row as InventoryEntry;
         const isLow = row.currentQuantity <= row.minimumThreshold;
@@ -173,7 +186,7 @@ export default function InventoryPage() {
       field: 'expirationDateUtc',
       headerName: 'Vencimiento',
       flex: 0.7,
-      minWidth: 120,
+      minWidth: isMobile ? 90 : 120,
       valueGetter: (_value: string | undefined, row: InventoryEntry) =>
         row.expirationDateUtc ? formatDate(row.expirationDateUtc) : 'N/A',
     },
@@ -181,12 +194,13 @@ export default function InventoryPage() {
       field: 'actions',
       type: 'actions',
       headerName: 'Acciones',
-      width: 100,
+      width: isMobile ? 80 : 100,
       getActions: (params) => [
         <GridActionsCellItem
           icon={<EditIcon />}
           label="Editar"
           onClick={() => handleOpenEdit(params.row as InventoryEntry)}
+          sx={{ minHeight: 44, minWidth: 44 }}
         />,
         <GridActionsCellItem
           icon={<DeleteIcon />}
@@ -195,6 +209,7 @@ export default function InventoryPage() {
             setEntryToDelete(params.row.id);
             setDeleteDialogOpen(true);
           }}
+          sx={{ minHeight: 44, minWidth: 44 }}
         />,
       ],
     },
@@ -206,6 +221,7 @@ export default function InventoryPage() {
     <Box>
       <PageHeader
         title="Inventario"
+        helpKey="inventory"
         subtitle="Control de stock de tus productos"
         actionLabel="Agregar al Inventario"
         onAction={handleOpenCreate}
@@ -221,7 +237,7 @@ export default function InventoryPage() {
       </PageHeader>
 
       {inventory && inventory.length > 0 ? (
-        <Box sx={{ height: { xs: 400, sm: 500, md: 600 }, width: '100%' }}>
+        <Box sx={{ height: { xs: 350, sm: 450, md: 600 }, width: '100%' }}>
           <DataGrid
             rows={inventory}
             columns={columns}
@@ -229,7 +245,7 @@ export default function InventoryPage() {
             initialState={{
               pagination: { paginationModel: { pageSize: 10 } },
             }}
-            columnVisibilityModel={{ expirationDate: !isMobile }}
+            columnVisibilityModel={{ expirationDateUtc: !isMobile }}
             disableRowSelectionOnClick
             getRowClassName={(params) =>
               params.row.isLowStock ? 'low-stock-row' : ''
@@ -281,7 +297,7 @@ export default function InventoryPage() {
                   </TextField>
                 )}
               />
-              <Box display="flex" gap={2} sx={{ flexDirection: { xs: 'column', sm: 'row' } }}>
+              <Box display="flex" gap={2} sx={{ flexDirection: { xs: 'column', sm: 'row' }, '& > *': { width: '100%' } }}>
                 <Controller
                   name="currentStock"
                   control={control}

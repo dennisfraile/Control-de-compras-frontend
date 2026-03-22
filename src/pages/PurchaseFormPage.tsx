@@ -1,4 +1,5 @@
 import { useEffect, useMemo } from 'react';
+import { CreatePurchaseDto } from '../types/purchase.types';
 import {
   Box,
   Card,
@@ -78,13 +79,13 @@ export default function PurchaseFormPage() {
     if (existingPurchase && isEditing) {
       reset({
         storeId: existingPurchase.storeId,
-        purchaseDate: dayjs(existingPurchase.purchaseDate),
+        purchaseDate: dayjs(existingPurchase.purchaseDateUtc),
         notes: existingPurchase.notes ?? '',
         items: existingPurchase.items.map((item) => ({
           productId: item.productId,
           quantity: item.quantity,
           unitPrice: item.unitPrice,
-          notes: item.notes ?? '',
+          notes: '',
         })),
       });
     }
@@ -99,15 +100,16 @@ export default function PurchaseFormPage() {
   }, [watchedItems]);
 
   const onSubmit = (data: PurchaseFormData) => {
-    const dto = {
+    const dto: CreatePurchaseDto = {
       storeId: data.storeId,
-      purchaseDate: data.purchaseDate.toISOString(),
+      purchaseDateUtc: data.purchaseDate.toISOString(),
       notes: data.notes || undefined,
       items: data.items.map((item) => ({
         productId: item.productId,
         quantity: Number(item.quantity),
+        unitTypeId: 5,
         unitPrice: Number(item.unitPrice),
-        notes: item.notes || undefined,
+        addToInventory: false,
       })),
     };
 
@@ -287,6 +289,7 @@ export default function PurchaseFormPage() {
                       onClick={() => remove(index)}
                       disabled={fields.length <= 1}
                       size="small"
+                      sx={{ minHeight: 44, minWidth: 44 }}
                     >
                       <DeleteIcon />
                     </IconButton>
@@ -306,13 +309,14 @@ export default function PurchaseFormPage() {
         </Card>
 
         <Box display="flex" gap={2} justifyContent="flex-end" sx={{ flexDirection: { xs: 'column-reverse', sm: 'row' } }}>
-          <Button variant="outlined" onClick={() => navigate('/purchases')}>
+          <Button variant="outlined" onClick={() => navigate('/purchases')} sx={{ minHeight: 44 }}>
             Cancelar
           </Button>
           <Button
             type="submit"
             variant="contained"
             disabled={createPurchase.isPending || updatePurchase.isPending}
+            sx={{ minHeight: 44 }}
           >
             {isEditing ? 'Actualizar Compra' : 'Registrar Compra'}
           </Button>

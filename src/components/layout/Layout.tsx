@@ -179,7 +179,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 
               <button
                 onClick={() => navigate('/ayuda')}
-                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors min-h-[44px]"
                 title="Centro de Ayuda"
               >
                 <HelpCircle size={20} className="text-gray-600 dark:text-gray-300" />
@@ -189,7 +189,7 @@ export default function Layout({ children }: { children: ReactNode }) {
               <div className="relative" ref={profileRef}>
                 <button
                   onClick={() => setProfileOpen(!profileOpen)}
-                  className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors min-h-[44px]"
                 >
                   {user?.pictureUrl ? (
                     <img src={user.pictureUrl} alt="" className="w-8 h-8 rounded-full object-cover" />
@@ -328,7 +328,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         </aside>
 
         {/* Main content */}
-        <main className="flex-1 transition-all duration-300 p-4 sm:p-6">
+        <main className="flex-1 transition-all duration-300 p-3 sm:p-4 md:p-6">
           {children}
         </main>
       </div>

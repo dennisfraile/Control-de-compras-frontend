@@ -58,14 +58,14 @@ export default function PurchasesPage() {
       field: 'purchaseDateUtc',
       headerName: 'Fecha',
       flex: 0.7,
-      minWidth: 120,
+      minWidth: isMobile ? 90 : 120,
       valueGetter: (_value: string, row: Purchase) => formatDate(row.purchaseDateUtc),
     },
     {
       field: 'storeName',
       headerName: 'Tienda',
       flex: 1,
-      minWidth: 150,
+      minWidth: isMobile ? 100 : 150,
       valueGetter: (_value: unknown, row: Purchase) => row.storeName ?? 'N/A',
     },
     {
@@ -81,7 +81,7 @@ export default function PurchasesPage() {
       field: 'totalAmount',
       headerName: 'Total',
       flex: 0.7,
-      minWidth: 120,
+      minWidth: isMobile ? 90 : 120,
       type: 'number',
       valueGetter: (_value: number, row: Purchase) => row.totalAmount,
       renderCell: (params) => (
@@ -92,17 +92,19 @@ export default function PurchasesPage() {
       field: 'actions',
       type: 'actions',
       headerName: 'Acciones',
-      width: isMobile ? 80 : 130,
+      width: isMobile ? 70 : 130,
       getActions: (params) => [
         <GridActionsCellItem
           icon={<ViewIcon />}
           label="Ver"
           onClick={() => navigate(`/purchases/${params.row.id}/edit`)}
+          sx={{ minHeight: 44, minWidth: 44 }}
         />,
         <GridActionsCellItem
           icon={<EditIcon />}
           label="Editar"
           onClick={() => navigate(`/purchases/${params.row.id}/edit`)}
+          sx={{ minHeight: 44, minWidth: 44 }}
         />,
         <GridActionsCellItem
           icon={<DeleteIcon />}
@@ -111,6 +113,7 @@ export default function PurchasesPage() {
             setPurchaseToDelete(params.row.id);
             setDeleteDialogOpen(true);
           }}
+          sx={{ minHeight: 44, minWidth: 44 }}
         />,
       ],
     },
@@ -122,6 +125,7 @@ export default function PurchasesPage() {
     <Box>
       <PageHeader
         title="Compras"
+        helpKey="purchases"
         subtitle="Historial de compras realizadas"
         actionLabel="Nueva Compra"
         onAction={() => navigate('/purchases/new')}
@@ -137,7 +141,7 @@ export default function PurchasesPage() {
       </PageHeader>
 
       {purchases && purchases.length > 0 ? (
-        <Box sx={{ height: { xs: 400, sm: 500, md: 600 }, width: '100%' }}>
+        <Box sx={{ height: { xs: 350, sm: 450, md: 600 }, width: '100%' }}>
           <DataGrid
             rows={purchases}
             columns={columns}
@@ -146,7 +150,7 @@ export default function PurchasesPage() {
               pagination: { paginationModel: { pageSize: 10 } },
               sorting: { sortModel: [{ field: 'purchaseDate', sort: 'desc' }] },
             }}
-            columnVisibilityModel={{ items: !isMobile }}
+            columnVisibilityModel={{ items: !isMobile, purchaseDateUtc: !isMobile }}
             disableRowSelectionOnClick
           />
         </Box>

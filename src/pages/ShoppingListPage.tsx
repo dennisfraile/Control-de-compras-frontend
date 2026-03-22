@@ -626,6 +626,7 @@ export default function ShoppingListPage() {
       <div>
         <PageHeader
           title="Lista de Compras"
+          helpKey="shoppingList"
           subtitle="Sugerencias inteligentes basadas en tu inventario"
         />
         <div className="flex flex-col items-center justify-center min-h-[350px] gap-4 py-8">
@@ -665,6 +666,7 @@ export default function ShoppingListPage() {
       {/* Header */}
       <PageHeader
         title="Lista de Compras"
+        helpKey="shoppingList"
         subtitle="Sugerencias inteligentes basadas en tu inventario"
       >
         <button
@@ -858,7 +860,7 @@ export default function ShoppingListPage() {
       <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50">
         <div
           className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg border-t border-gray-200 dark:border-gray-700
-            px-4 py-3 flex items-center justify-between gap-3"
+            px-4 py-3 pb-[env(safe-area-inset-bottom)] flex items-center justify-between gap-3"
         >
           <div className="min-w-0">
             <p className="text-sm font-semibold text-gray-800 dark:text-white truncate">

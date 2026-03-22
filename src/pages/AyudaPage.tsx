@@ -38,7 +38,7 @@ export default function AyudaPage() {
   );
 
   return (
-    <div>
+    <div className="max-w-3xl mx-auto">
       <PageHeader title="Centro de Ayuda" subtitle="Aprende a usar todas las funciones de Mis Compras" />
 
       {/* Tabs */}

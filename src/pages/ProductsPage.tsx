@@ -114,33 +114,34 @@ export default function ProductsPage() {
   };
 
   const columns: GridColDef[] = [
-    { field: 'name', headerName: 'Nombre', flex: 1, minWidth: 150 },
-    { field: 'brand', headerName: 'Marca', flex: 0.7, minWidth: 100 },
+    { field: 'name', headerName: 'Nombre', flex: 1, minWidth: isMobile ? 100 : 150 },
+    { field: 'brand', headerName: 'Marca', flex: 0.7, minWidth: isMobile ? 80 : 100 },
     {
       field: 'category',
       headerName: 'Categoria',
       flex: 0.7,
-      minWidth: 120,
+      minWidth: isMobile ? 90 : 120,
       valueGetter: (_value: Category, row: Product) => CategoryLabels[row.category] ?? row.category,
     },
     {
       field: 'defaultUnit',
       headerName: 'Unidad',
       flex: 0.5,
-      minWidth: 100,
+      minWidth: isMobile ? 80 : 100,
       valueGetter: (_value: UnitType, row: Product) => UnitTypeLabels[row.defaultUnit] ?? row.defaultUnit,
     },
-    { field: 'defaultQuantity', headerName: 'Cantidad', flex: 0.5, minWidth: 80, type: 'number' },
+    { field: 'defaultQuantity', headerName: 'Cantidad', flex: 0.5, minWidth: isMobile ? 70 : 80, type: 'number' },
     {
       field: 'actions',
       type: 'actions',
       headerName: 'Acciones',
-      width: 100,
+      width: isMobile ? 80 : 100,
       getActions: (params) => [
         <GridActionsCellItem
           icon={<EditIcon />}
           label="Editar"
           onClick={() => handleOpenEdit(params.row as Product)}
+          sx={{ minHeight: 44, minWidth: 44 }}
         />,
         <GridActionsCellItem
           icon={<DeleteIcon />}
@@ -149,6 +150,7 @@ export default function ProductsPage() {
             setProductToDelete(params.row.id);
             setDeleteDialogOpen(true);
           }}
+          sx={{ minHeight: 44, minWidth: 44 }}
         />,
       ],
     },
@@ -160,13 +162,14 @@ export default function ProductsPage() {
     <Box>
       <PageHeader
         title="Productos"
+        helpKey="products"
         subtitle="Gestiona tu catalogo de productos"
         actionLabel="Nuevo Producto"
         onAction={handleOpenCreate}
       />
 
       {products && products.length > 0 ? (
-        <Box sx={{ height: { xs: 400, sm: 500, md: 600 }, width: '100%' }}>
+        <Box sx={{ height: { xs: 350, sm: 450, md: 600 }, width: '100%' }}>
           <DataGrid
             rows={products}
             columns={columns}
@@ -174,7 +177,7 @@ export default function ProductsPage() {
             initialState={{
               pagination: { paginationModel: { pageSize: 10 } },
             }}
-            columnVisibilityModel={{ brand: !isMobile }}
+            columnVisibilityModel={{ brand: !isMobile, defaultQuantity: !isMobile }}
             disableRowSelectionOnClick
           />
         </Box>

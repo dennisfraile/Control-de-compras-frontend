@@ -104,20 +104,21 @@ export default function StoresPage() {
   };
 
   const columns: GridColDef[] = [
-    { field: 'name', headerName: 'Nombre', flex: 1, minWidth: 150 },
-    { field: 'address', headerName: 'Direccion', flex: 1, minWidth: 200 },
-    { field: 'city', headerName: 'Ciudad', flex: 0.7, minWidth: 120 },
-    { field: 'phone', headerName: 'Telefono', flex: 0.7, minWidth: 120 },
+    { field: 'name', headerName: 'Nombre', flex: 1, minWidth: isMobile ? 100 : 150 },
+    { field: 'address', headerName: 'Direccion', flex: 1, minWidth: isMobile ? 100 : 200 },
+    { field: 'city', headerName: 'Ciudad', flex: 0.7, minWidth: isMobile ? 80 : 120 },
+    { field: 'phone', headerName: 'Telefono', flex: 0.7, minWidth: isMobile ? 80 : 120 },
     {
       field: 'actions',
       type: 'actions',
       headerName: 'Acciones',
-      width: 100,
+      width: isMobile ? 80 : 100,
       getActions: (params) => [
         <GridActionsCellItem
           icon={<EditIcon />}
           label="Editar"
           onClick={() => handleOpenEdit(params.row as Store)}
+          sx={{ minHeight: 44, minWidth: 44 }}
         />,
         <GridActionsCellItem
           icon={<DeleteIcon />}
@@ -126,6 +127,7 @@ export default function StoresPage() {
             setStoreToDelete(params.row.id);
             setDeleteDialogOpen(true);
           }}
+          sx={{ minHeight: 44, minWidth: 44 }}
         />,
       ],
     },
@@ -137,13 +139,14 @@ export default function StoresPage() {
     <Box>
       <PageHeader
         title="Tiendas"
+        helpKey="stores"
         subtitle="Gestiona las tiendas donde realizas tus compras"
         actionLabel="Nueva Tienda"
         onAction={handleOpenCreate}
       />
 
       {stores && stores.length > 0 ? (
-        <Box sx={{ height: { xs: 400, sm: 500, md: 600 }, width: '100%' }}>
+        <Box sx={{ height: { xs: 350, sm: 450, md: 600 }, width: '100%' }}>
           <DataGrid
             rows={stores}
             columns={columns}

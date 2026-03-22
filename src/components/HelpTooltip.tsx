@@ -85,7 +85,7 @@ export default function HelpTooltip({ content }: HelpTooltipProps) {
 
       {/* Desktop: Dropdown */}
       {open && !isMobile && (
-        <div className="absolute left-0 top-full mt-2 w-80 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 z-50 animate-fade-in">
+        <div className="absolute right-0 top-full mt-2 w-72 sm:w-80 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 z-50 animate-fade-in">
           <div className="px-4 pt-4 pb-3 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <HelpCircle size={18} className="text-blue-500" />

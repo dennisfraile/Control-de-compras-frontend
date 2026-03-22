@@ -8,7 +8,7 @@ export default function ProfilePage() {
 
   return (
     <div>
-      <PageHeader title="Mi Perfil" subtitle="Informacion de tu cuenta" />
+      <PageHeader title="Mi Perfil" helpKey="profile" subtitle="Informacion de tu cuenta" />
 
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-8 max-w-lg mx-auto text-center animate-fade-in">
         {user.pictureUrl ? (

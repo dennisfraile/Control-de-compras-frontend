@@ -83,6 +83,7 @@ export default function PriceComparisonPage() {
     <Box>
       <PageHeader
         title="Comparacion de Precios"
+        helpKey="prices"
         subtitle="Analiza la evolucion de precios por producto y tienda"
       >
         <Button variant="outlined" onClick={() => navigate('/prices/community')}>
@@ -123,7 +124,7 @@ export default function PriceComparisonPage() {
               <ResponsiveContainer width="100%" height={isMobile ? 250 : 400}>
                 <LineChart
                   data={chartData}
-                  margin={isMobile ? { top: 5, right: 10, left: 0, bottom: 5 } : { top: 5, right: 30, left: 20, bottom: 5 }}
+                  margin={isMobile ? { top: 5, right: 5, left: 0, bottom: 5 } : { top: 5, right: 30, left: 20, bottom: 5 }}
                 >
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="date" />

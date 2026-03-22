@@ -107,6 +107,7 @@ export default function TemplatesPage() {
     <div>
       <PageHeader
         title="Plantillas de Compra"
+        helpKey="templates"
         subtitle="Crea y reutiliza listas de compras frecuentes"
         actionLabel="Crear plantilla"
         actionIcon={<Plus className="w-4 h-4" />}
