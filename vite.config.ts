@@ -8,13 +8,13 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'logo.png'],
+      includeAssets: ['favicon.png', 'logo.png'],
       manifest: {
-        name: 'Control de Compras - FraileDev',
-        short_name: 'Compras',
+        name: 'Mis Compras - FraileDev',
+        short_name: 'Mis Compras',
         description: 'Aplicación para el control y seguimiento de compras del hogar',
-        theme_color: '#1976d2',
-        background_color: '#2d2d2d',
+        theme_color: '#3b82f6',
+        background_color: '#ffffff',
         display: 'standalone',
         start_url: '/',
         icons: [
