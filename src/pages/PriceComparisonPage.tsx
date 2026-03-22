@@ -24,7 +24,9 @@ import { useNavigate } from 'react-router-dom';
 import PageHeader from '../components/common/PageHeader';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import EmptyState from '../components/common/EmptyState';
+import DependencyBanner from '../components/onboarding/DependencyBanner';
 import { useProducts } from '../hooks/useProducts';
+import { usePurchases } from '../hooks/usePurchases';
 import { usePriceHistory } from '../hooks/usePrices';
 import { formatCurrency, formatDate } from '../utils/format';
 
@@ -44,6 +46,8 @@ export default function PriceComparisonPage() {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const navigate = useNavigate();
   const { data: products, isLoading: productsLoading } = useProducts();
+  const { data: purchases } = usePurchases();
+  const hasPurchases = (purchases?.length ?? 0) > 0;
   const [selectedProductId, setSelectedProductId] = useState('');
 
   const { data: priceHistory, isLoading: priceLoading } = usePriceHistory({
@@ -81,6 +85,13 @@ export default function PriceComparisonPage() {
 
   return (
     <Box>
+      <DependencyBanner
+        show={!hasPurchases}
+        message="Registra compras en diferentes tiendas para comparar precios."
+        actionLabel="Registrar compra"
+        actionPath="/purchases/new"
+      />
+
       <PageHeader
         title="Comparacion de precios"
         helpKey="prices"

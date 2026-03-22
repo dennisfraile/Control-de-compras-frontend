@@ -9,6 +9,7 @@ import PageHeader from '../components/common/PageHeader';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import ConfirmDialog from '../components/common/ConfirmDialog';
 import EmptyState from '../components/common/EmptyState';
+import DependencyBanner from '../components/onboarding/DependencyBanner';
 import {
   useInventory,
   useCreateInventoryEntry,
@@ -217,8 +218,17 @@ export default function InventoryPage() {
 
   if (isLoading) return <LoadingSpinner />;
 
+  const hasProducts = (products?.length ?? 0) > 0;
+
   return (
     <Box>
+      <DependencyBanner
+        show={!hasProducts}
+        message="Agrega productos primero para poder registrar tu inventario."
+        actionLabel="Ir a productos"
+        actionPath="/products"
+      />
+
       <PageHeader
         title="Inventario"
         helpKey="inventory"

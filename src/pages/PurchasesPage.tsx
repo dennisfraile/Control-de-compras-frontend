@@ -7,7 +7,10 @@ import PageHeader from '../components/common/PageHeader';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import EmptyState from '../components/common/EmptyState';
 import ConfirmDialog from '../components/common/ConfirmDialog';
+import DependencyBanner from '../components/onboarding/DependencyBanner';
 import { usePurchases, useDeletePurchase } from '../hooks/usePurchases';
+import { useStores } from '../hooks/useStores';
+import { useProducts } from '../hooks/useProducts';
 import { purchasesApi } from '../api/purchases.api';
 import { Purchase } from '../types/purchase.types';
 import { formatCurrency, formatDate } from '../utils/format';
@@ -18,6 +21,10 @@ export default function PurchasesPage() {
   const navigate = useNavigate();
   const { data: purchases, isLoading } = usePurchases();
   const deletePurchase = useDeletePurchase();
+  const { data: stores } = useStores();
+  const { data: products } = useProducts();
+  const hasStores = (stores?.length ?? 0) > 0;
+  const hasProducts = (products?.length ?? 0) > 0;
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [purchaseToDelete, setPurchaseToDelete] = useState<string | null>(null);
@@ -123,6 +130,13 @@ export default function PurchasesPage() {
 
   return (
     <Box>
+      <DependencyBanner
+        show={!hasStores || !hasProducts}
+        message="Para registrar compras necesitas al menos una tienda y productos."
+        actionLabel="Ir a tiendas"
+        actionPath="/stores"
+      />
+
       <PageHeader
         title="Compras"
         helpKey="purchases"

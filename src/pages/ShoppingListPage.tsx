@@ -20,10 +20,13 @@ import {
   MapPin,
 } from 'lucide-react';
 import PageHeader from '../components/common/PageHeader';
+import DependencyBanner from '../components/onboarding/DependencyBanner';
 import {
   useShoppingList,
   useGenerateShoppingList,
 } from '../hooks/useShoppingList';
+import { useProducts } from '../hooks/useProducts';
+import { useInventory } from '../hooks/useInventory';
 import { ShoppingListSuggestion } from '../types/shopping-list.types';
 import { formatCurrency } from '../utils/format';
 
@@ -490,6 +493,10 @@ function SummaryPanel({
 export default function ShoppingListPage() {
   const { data: rawItems, isLoading } = useShoppingList();
   const generateList = useGenerateShoppingList();
+  const { data: products } = useProducts();
+  const { data: inventory } = useInventory();
+  const hasProducts = (products?.length ?? 0) > 0;
+  const hasInventory = (inventory?.length ?? 0) > 0;
 
   // Local state
   const [checkedSet, setCheckedSet] = useState<Set<string>>(new Set());
@@ -624,6 +631,12 @@ export default function ShoppingListPage() {
   if (!rawItems || rawItems.length === 0) {
     return (
       <div>
+        <DependencyBanner
+          show={!hasProducts || !hasInventory}
+          message="La lista de compras necesita productos e inventario registrados para generar sugerencias."
+          actionLabel="Ir a productos"
+          actionPath="/products"
+        />
         <PageHeader
           title="Lista de compras"
           helpKey="shoppingList"
@@ -663,6 +676,13 @@ export default function ShoppingListPage() {
 
   return (
     <div className="pb-24 lg:pb-0">
+      <DependencyBanner
+        show={!hasProducts || !hasInventory}
+        message="La lista de compras necesita productos e inventario registrados para generar sugerencias."
+        actionLabel="Ir a productos"
+        actionPath="/products"
+      />
+
       {/* Header */}
       <PageHeader
         title="Lista de compras"

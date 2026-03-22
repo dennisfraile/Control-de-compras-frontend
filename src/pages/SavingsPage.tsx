@@ -17,6 +17,8 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import PageHeader from '../components/common/PageHeader';
+import DependencyBanner from '../components/onboarding/DependencyBanner';
+import { usePurchases } from '../hooks/usePurchases';
 import { getSavingsAnalysis } from '../api/savings.api';
 import { formatCurrency } from '../utils/format';
 import { useThemeContext } from '../context/ThemeContext';
@@ -38,6 +40,8 @@ interface SavingsData {
 
 export default function SavingsPage() {
   const { theme } = useThemeContext();
+  const { data: purchases } = usePurchases();
+  const hasPurchases = (purchases?.length ?? 0) > 0;
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   useEffect(() => {
@@ -56,6 +60,13 @@ export default function SavingsPage() {
 
   return (
     <div>
+      <DependencyBanner
+        show={!hasPurchases}
+        message="Necesitas registrar compras para ver el analisis de ahorro."
+        actionLabel="Registrar compra"
+        actionPath="/purchases/new"
+      />
+
       <PageHeader
         title="Analisis de ahorro"
         helpKey="savings"
