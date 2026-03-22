@@ -144,8 +144,7 @@ export default function Layout({ children }: { children: ReactNode }) {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Navbar */}
       <nav className="bg-white dark:bg-gray-800 shadow-sm border-b dark:border-gray-700 sticky top-0 z-20 transition-colors">
-        <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16 items-center">
+        <div className="flex justify-between h-16 items-center px-3 sm:px-4 md:px-6">
             {/* LEFT: hamburger + logo + title */}
             <div className="flex items-center space-x-2">
               <button
@@ -158,7 +157,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                   <Menu size={24} className="text-gray-600 dark:text-gray-300" />
                 )}
               </button>
-              <img src="/logo.png" alt="Mis compras" className="h-8 w-8 rounded-full object-cover" />
+              <img src="/logo.png" alt="Mis compras" className="h-8 w-auto object-contain" />
               <h1 className="text-lg sm:text-xl font-bold text-gray-800 dark:text-white">
                 Mis compras
               </h1>
@@ -239,7 +238,6 @@ export default function Layout({ children }: { children: ReactNode }) {
               </div>
             </div>
           </div>
-        </div>
       </nav>
 
       <div className="flex relative">

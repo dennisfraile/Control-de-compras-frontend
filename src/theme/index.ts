@@ -109,6 +109,49 @@ export const getTheme = (mode: PaletteMode) =>
             },
           },
         },
+        MuiDataGrid: {
+          styleOverrides: {
+            root: {
+              borderRadius: 12,
+              border:
+                mode === 'light'
+                  ? '1px solid rgba(0,0,0,0.08)'
+                  : '1px solid rgba(255,255,255,0.08)',
+              boxShadow:
+                mode === 'light'
+                  ? '0 1px 3px rgba(0,0,0,0.06)'
+                  : '0 1px 3px rgba(0,0,0,0.2)',
+              '& .MuiDataGrid-columnHeaders': {
+                backgroundColor: mode === 'light' ? '#f8fafc' : '#1e293b',
+                borderBottom:
+                  mode === 'light'
+                    ? '1px solid rgba(0,0,0,0.08)'
+                    : '1px solid rgba(255,255,255,0.08)',
+                fontSize: '0.8rem',
+                fontWeight: 600,
+                textTransform: 'uppercase' as const,
+                letterSpacing: '0.03em',
+                color: mode === 'light' ? '#64748b' : '#94a3b8',
+              },
+              '& .MuiDataGrid-cell': {
+                borderBottom:
+                  mode === 'light'
+                    ? '1px solid rgba(0,0,0,0.04)'
+                    : '1px solid rgba(255,255,255,0.04)',
+                fontSize: '0.875rem',
+              },
+              '& .MuiDataGrid-row:hover': {
+                backgroundColor: mode === 'light' ? '#f1f5f9' : '#1e293b',
+              },
+              '& .MuiDataGrid-footerContainer': {
+                borderTop:
+                  mode === 'light'
+                    ? '1px solid rgba(0,0,0,0.08)'
+                    : '1px solid rgba(255,255,255,0.08)',
+              },
+            },
+          },
+        },
       },
     },
     esES,

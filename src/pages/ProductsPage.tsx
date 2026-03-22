@@ -1,7 +1,6 @@
 import { useState } from 'react';
-import { Box, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField, MenuItem, useTheme, useMediaQuery } from '@mui/material';
-import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
-import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
+import { Box, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField, MenuItem } from '@mui/material';
+import { Pencil, Trash2 } from 'lucide-react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -9,9 +8,10 @@ import PageHeader from '../components/common/PageHeader';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import ConfirmDialog from '../components/common/ConfirmDialog';
 import EmptyState from '../components/common/EmptyState';
+import ResponsiveTable, { Column } from '../components/common/ResponsiveTable';
 import { useProducts, useCreateProduct, useUpdateProduct, useDeleteProduct } from '../hooks/useProducts';
 import { Product, CreateProductDto } from '../types/product.types';
-import { Category, UnitType, CategoryLabels, UnitTypeLabels } from '../utils/constants';
+import { Category, UnitType, CategoryLabels, UnitTypeLabels, UnitTypeAbbreviations } from '../utils/constants';
 
 const productSchema = z.object({
   name: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),
@@ -26,8 +26,6 @@ const productSchema = z.object({
 type ProductFormData = z.infer<typeof productSchema>;
 
 export default function ProductsPage() {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { data: products, isLoading } = useProducts();
   const createProduct = useCreateProduct();
   const updateProduct = useUpdateProduct();
@@ -113,48 +111,78 @@ export default function ProductsPage() {
     }
   };
 
-  const columns: GridColDef[] = [
-    { field: 'name', headerName: 'Nombre', flex: 1, minWidth: isMobile ? 100 : 150 },
-    { field: 'brand', headerName: 'Marca', flex: 0.7, minWidth: isMobile ? 80 : 100 },
+  const columns: Column<Product>[] = [
     {
-      field: 'category',
-      headerName: 'Categoria',
-      flex: 0.7,
-      minWidth: isMobile ? 90 : 120,
-      valueGetter: (_value: Category, row: Product) => CategoryLabels[row.category] ?? row.category,
+      key: 'name',
+      header: 'Nombre',
+      align: 'left',
+      render: (row) => row.name,
     },
     {
-      field: 'defaultUnit',
-      headerName: 'Unidad',
-      flex: 0.5,
-      minWidth: isMobile ? 80 : 100,
-      valueGetter: (_value: UnitType, row: Product) => UnitTypeLabels[row.defaultUnit] ?? row.defaultUnit,
+      key: 'brand',
+      header: 'Marca',
+      align: 'center',
+      hideOnMobile: true,
+      render: (row) => row.brand ?? '-',
     },
-    { field: 'defaultQuantity', headerName: 'Cantidad', flex: 0.5, minWidth: isMobile ? 70 : 80, type: 'number' },
     {
-      field: 'actions',
-      type: 'actions',
-      headerName: 'Acciones',
-      width: isMobile ? 80 : 100,
-      getActions: (params) => [
-        <GridActionsCellItem
-          icon={<EditIcon />}
-          label="Editar"
-          onClick={() => handleOpenEdit(params.row as Product)}
-          sx={{ minHeight: 44, minWidth: 44 }}
-        />,
-        <GridActionsCellItem
-          icon={<DeleteIcon />}
-          label="Eliminar"
-          onClick={() => {
-            setProductToDelete(params.row.id);
-            setDeleteDialogOpen(true);
-          }}
-          sx={{ minHeight: 44, minWidth: 44 }}
-        />,
-      ],
+      key: 'category',
+      header: 'Categoria',
+      align: 'center',
+      render: (row) => CategoryLabels[row.category] ?? row.category,
+    },
+    {
+      key: 'defaultUnit',
+      header: 'Unidad',
+      align: 'center',
+      hideOnMobile: true,
+      render: (row) => UnitTypeLabels[row.defaultUnit] ?? row.defaultUnit,
+    },
+    {
+      key: 'defaultQuantity',
+      header: 'Cantidad',
+      align: 'center',
+      render: (row) => row.defaultQuantity,
     },
   ];
+
+  const mobileCardRender = (product: Product) => {
+    const unitAbbr = UnitTypeAbbreviations[product.defaultUnit] ?? product.defaultUnit;
+    const categoryLabel = CategoryLabels[product.category] ?? product.category;
+    return (
+      <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-700">
+        <div className="flex items-start justify-between">
+          <div className="flex-1 min-w-0">
+            <div className="font-semibold text-gray-900 dark:text-gray-100 truncate">
+              {product.name}
+            </div>
+            <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              {categoryLabel} · {product.defaultQuantity} {unitAbbr}
+            </div>
+          </div>
+          <div className="flex items-center gap-1 ml-2 shrink-0">
+            <button
+              onClick={() => handleOpenEdit(product)}
+              className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              title="Editar"
+            >
+              <Pencil size={18} className="text-blue-600" />
+            </button>
+            <button
+              onClick={() => {
+                setProductToDelete(product.id);
+                setDeleteDialogOpen(true);
+              }}
+              className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              title="Eliminar"
+            >
+              <Trash2 size={18} className="text-red-600" />
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   if (isLoading) return <LoadingSpinner />;
 
@@ -169,18 +197,17 @@ export default function ProductsPage() {
       />
 
       {products && products.length > 0 ? (
-        <Box sx={{ height: { xs: 350, sm: 450, md: 600 }, width: '100%' }}>
-          <DataGrid
-            rows={products}
-            columns={columns}
-            pageSizeOptions={[10, 25, 50]}
-            initialState={{
-              pagination: { paginationModel: { pageSize: 10 } },
-            }}
-            columnVisibilityModel={{ brand: !isMobile, defaultQuantity: !isMobile }}
-            disableRowSelectionOnClick
-          />
-        </Box>
+        <ResponsiveTable
+          columns={columns}
+          data={products}
+          keyExtractor={(p) => p.id}
+          onEdit={handleOpenEdit}
+          onDelete={(p) => {
+            setProductToDelete(p.id);
+            setDeleteDialogOpen(true);
+          }}
+          mobileCardRender={mobileCardRender}
+        />
       ) : (
         <EmptyState
           title="No hay productos"

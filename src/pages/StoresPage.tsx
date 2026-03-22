@@ -1,14 +1,14 @@
 import { useState } from 'react';
-import { Box, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField, useTheme, useMediaQuery } from '@mui/material';
-import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
-import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
+import { Box, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { Pencil, Trash2 } from 'lucide-react';
 import PageHeader from '../components/common/PageHeader';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import ConfirmDialog from '../components/common/ConfirmDialog';
 import EmptyState from '../components/common/EmptyState';
+import ResponsiveTable, { Column } from '../components/common/ResponsiveTable';
 import { useStores, useCreateStore, useUpdateStore, useDeleteStore } from '../hooks/useStores';
 import { Store, CreateStoreDto } from '../types/store.types';
 
@@ -24,8 +24,6 @@ const storeSchema = z.object({
 type StoreFormData = z.infer<typeof storeSchema>;
 
 export default function StoresPage() {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { data: stores, isLoading } = useStores();
   const createStore = useCreateStore();
   const updateStore = useUpdateStore();
@@ -103,35 +101,64 @@ export default function StoresPage() {
     }
   };
 
-  const columns: GridColDef[] = [
-    { field: 'name', headerName: 'Nombre', flex: 1, minWidth: isMobile ? 100 : 150 },
-    { field: 'address', headerName: 'Direccion', flex: 1, minWidth: isMobile ? 100 : 200 },
-    { field: 'city', headerName: 'Ciudad', flex: 0.7, minWidth: isMobile ? 80 : 120 },
-    { field: 'phone', headerName: 'Telefono', flex: 0.7, minWidth: isMobile ? 80 : 120 },
+  const columns: Column<Store>[] = [
     {
-      field: 'actions',
-      type: 'actions',
-      headerName: 'Acciones',
-      width: isMobile ? 80 : 100,
-      getActions: (params) => [
-        <GridActionsCellItem
-          icon={<EditIcon />}
-          label="Editar"
-          onClick={() => handleOpenEdit(params.row as Store)}
-          sx={{ minHeight: 44, minWidth: 44 }}
-        />,
-        <GridActionsCellItem
-          icon={<DeleteIcon />}
-          label="Eliminar"
-          onClick={() => {
-            setStoreToDelete(params.row.id);
-            setDeleteDialogOpen(true);
-          }}
-          sx={{ minHeight: 44, minWidth: 44 }}
-        />,
-      ],
+      key: 'name',
+      header: 'Nombre',
+      align: 'left',
+      render: (row) => row.name,
+    },
+    {
+      key: 'address',
+      header: 'Direccion',
+      align: 'center',
+      hideOnMobile: true,
+      render: (row) => row.address ?? '-',
+    },
+    {
+      key: 'city',
+      header: 'Ciudad',
+      align: 'center',
+      hideOnMobile: true,
+      render: (row) => row.city ?? '-',
     },
   ];
+
+  const mobileCardRender = (store: Store) => (
+    <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-700">
+      <div className="flex items-start justify-between">
+        <div className="flex-1 min-w-0">
+          <div className="font-semibold text-gray-900 dark:text-gray-100 truncate">
+            {store.name}
+          </div>
+          {(store.address || store.city) && (
+            <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              {[store.address, store.city].filter(Boolean).join(' · ')}
+            </div>
+          )}
+        </div>
+        <div className="flex items-center gap-1 ml-2 shrink-0">
+          <button
+            onClick={() => handleOpenEdit(store)}
+            className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            title="Editar"
+          >
+            <Pencil size={18} className="text-blue-600" />
+          </button>
+          <button
+            onClick={() => {
+              setStoreToDelete(store.id);
+              setDeleteDialogOpen(true);
+            }}
+            className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            title="Eliminar"
+          >
+            <Trash2 size={18} className="text-red-600" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 
   if (isLoading) return <LoadingSpinner />;
 
@@ -146,18 +173,17 @@ export default function StoresPage() {
       />
 
       {stores && stores.length > 0 ? (
-        <Box sx={{ height: { xs: 350, sm: 450, md: 600 }, width: '100%' }}>
-          <DataGrid
-            rows={stores}
-            columns={columns}
-            pageSizeOptions={[10, 25, 50]}
-            initialState={{
-              pagination: { paginationModel: { pageSize: 10 } },
-            }}
-            columnVisibilityModel={{ address: !isMobile, city: !isMobile }}
-            disableRowSelectionOnClick
-          />
-        </Box>
+        <ResponsiveTable
+          columns={columns}
+          data={stores}
+          keyExtractor={(s) => s.id}
+          onEdit={handleOpenEdit}
+          onDelete={(s) => {
+            setStoreToDelete(s.id);
+            setDeleteDialogOpen(true);
+          }}
+          mobileCardRender={mobileCardRender}
+        />
       ) : (
         <EmptyState
           title="No hay tiendas"

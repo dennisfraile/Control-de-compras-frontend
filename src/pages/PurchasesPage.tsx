@@ -1,13 +1,14 @@
-import { Box, Button, Chip, useTheme, useMediaQuery } from '@mui/material';
-import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
-import { Edit as EditIcon, Delete as DeleteIcon, Visibility as ViewIcon, FileDownload as FileDownloadIcon } from '@mui/icons-material';
+import { Box, Button } from '@mui/material';
+import { FileDownload as FileDownloadIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { Pencil, Trash2, Eye } from 'lucide-react';
 import PageHeader from '../components/common/PageHeader';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import EmptyState from '../components/common/EmptyState';
 import ConfirmDialog from '../components/common/ConfirmDialog';
 import DependencyBanner from '../components/onboarding/DependencyBanner';
+import ResponsiveTable, { Column } from '../components/common/ResponsiveTable';
 import { usePurchases, useDeletePurchase } from '../hooks/usePurchases';
 import { useStores } from '../hooks/useStores';
 import { useProducts } from '../hooks/useProducts';
@@ -16,8 +17,6 @@ import { Purchase } from '../types/purchase.types';
 import { formatCurrency, formatDate } from '../utils/format';
 
 export default function PurchasesPage() {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const navigate = useNavigate();
   const { data: purchases, isLoading } = usePurchases();
   const deletePurchase = useDeletePurchase();
@@ -60,71 +59,87 @@ export default function PurchasesPage() {
     }
   };
 
-  const columns: GridColDef[] = [
+  const columns: Column<Purchase>[] = [
     {
-      field: 'purchaseDateUtc',
-      headerName: 'Fecha',
-      flex: 0.7,
-      minWidth: isMobile ? 90 : 120,
-      valueGetter: (_value: string, row: Purchase) => formatDate(row.purchaseDateUtc),
+      key: 'purchaseDateUtc',
+      header: 'Fecha',
+      align: 'left',
+      hideOnMobile: true,
+      render: (row) => formatDate(row.purchaseDateUtc),
     },
     {
-      field: 'storeName',
-      headerName: 'Tienda',
-      flex: 1,
-      minWidth: isMobile ? 100 : 150,
-      valueGetter: (_value: unknown, row: Purchase) => row.storeName ?? 'N/A',
+      key: 'storeName',
+      header: 'Tienda',
+      align: 'center',
+      render: (row) => row.storeName ?? 'N/A',
     },
     {
-      field: 'items',
-      headerName: 'Items',
-      flex: 0.5,
-      minWidth: 80,
-      renderCell: (params) => (
-        <Chip label={`${params.row.items?.length ?? 0} items`} size="small" />
+      key: 'items',
+      header: 'Items',
+      align: 'center',
+      hideOnMobile: true,
+      render: (row) => (
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200">
+          {row.items?.length ?? 0} items
+        </span>
       ),
     },
     {
-      field: 'totalAmount',
-      headerName: 'Total',
-      flex: 0.7,
-      minWidth: isMobile ? 90 : 120,
-      type: 'number',
-      valueGetter: (_value: number, row: Purchase) => row.totalAmount,
-      renderCell: (params) => (
-        <Box fontWeight="bold">{formatCurrency(params.value)}</Box>
+      key: 'totalAmount',
+      header: 'Total',
+      align: 'center',
+      render: (row) => (
+        <span className="font-bold">{formatCurrency(row.totalAmount)}</span>
       ),
-    },
-    {
-      field: 'actions',
-      type: 'actions',
-      headerName: 'Acciones',
-      width: isMobile ? 70 : 130,
-      getActions: (params) => [
-        <GridActionsCellItem
-          icon={<ViewIcon />}
-          label="Ver"
-          onClick={() => navigate(`/purchases/${params.row.id}/edit`)}
-          sx={{ minHeight: 44, minWidth: 44 }}
-        />,
-        <GridActionsCellItem
-          icon={<EditIcon />}
-          label="Editar"
-          onClick={() => navigate(`/purchases/${params.row.id}/edit`)}
-          sx={{ minHeight: 44, minWidth: 44 }}
-        />,
-        <GridActionsCellItem
-          icon={<DeleteIcon />}
-          label="Eliminar"
-          onClick={() => {
-            setPurchaseToDelete(params.row.id);
-            setDeleteDialogOpen(true);
-          }}
-          sx={{ minHeight: 44, minWidth: 44 }}
-        />,
-      ],
     },
   ];
+
+  const purchaseActions = (row: Purchase) => (
+    <div className="flex items-center gap-1">
+      <button
+        onClick={() => navigate(`/purchases/${row.id}/edit`)}
+        className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+        title="Ver"
+      >
+        <Eye size={18} className="text-green-600" />
+      </button>
+      <button
+        onClick={() => navigate(`/purchases/${row.id}/edit`)}
+        className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+        title="Editar"
+      >
+        <Pencil size={18} className="text-blue-600" />
+      </button>
+      <button
+        onClick={() => {
+          setPurchaseToDelete(row.id);
+          setDeleteDialogOpen(true);
+        }}
+        className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+        title="Eliminar"
+      >
+        <Trash2 size={18} className="text-red-600" />
+      </button>
+    </div>
+  );
+
+  const mobileCardRender = (purchase: Purchase) => (
+    <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-700">
+      <div className="flex items-start justify-between">
+        <div className="flex-1 min-w-0">
+          <div className="font-semibold text-gray-900 dark:text-gray-100 truncate">
+            {purchase.storeName ?? 'N/A'}
+          </div>
+          <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            {formatDate(purchase.purchaseDateUtc)} · {formatCurrency(purchase.totalAmount)}
+          </div>
+        </div>
+        <div className="flex items-center gap-1 ml-2 shrink-0">
+          {purchaseActions(purchase)}
+        </div>
+      </div>
+    </div>
+  );
 
   if (isLoading) return <LoadingSpinner />;
 
@@ -155,19 +170,13 @@ export default function PurchasesPage() {
       </PageHeader>
 
       {purchases && purchases.length > 0 ? (
-        <Box sx={{ height: { xs: 350, sm: 450, md: 600 }, width: '100%' }}>
-          <DataGrid
-            rows={purchases}
-            columns={columns}
-            pageSizeOptions={[10, 25, 50]}
-            initialState={{
-              pagination: { paginationModel: { pageSize: 10 } },
-              sorting: { sortModel: [{ field: 'purchaseDate', sort: 'desc' }] },
-            }}
-            columnVisibilityModel={{ items: !isMobile, purchaseDateUtc: !isMobile }}
-            disableRowSelectionOnClick
-          />
-        </Box>
+        <ResponsiveTable
+          columns={columns}
+          data={purchases}
+          keyExtractor={(p) => p.id}
+          actions={purchaseActions}
+          mobileCardRender={mobileCardRender}
+        />
       ) : (
         <EmptyState
           title="No hay compras registradas"

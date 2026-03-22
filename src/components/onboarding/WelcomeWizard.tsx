@@ -4,26 +4,27 @@ import { useOnboarding } from '../../hooks/useOnboarding';
 import { useOnboardingStore } from '../../stores/onboarding.store';
 import { useCreateStore } from '../../hooks/useStores';
 import { useCreateProduct } from '../../hooks/useProducts';
-import { Category, UnitType } from '../../utils/constants';
+// Category IDs from DB: 1=Lacteos, 2=Carnes, 3=Frutas, 4=Cereales, 5=Bebidas, 6=Limpieza, 7=Higiene, 8=Enlatados, 9=Condimentos, 10=Panaderia
+// UnitType IDs from DB: 1=ml, 2=L, 3=g, 4=kg, 5=ud, 6=pz
 
 interface CommonProduct {
   name: string;
-  category: Category;
-  defaultUnit: UnitType;
+  categoryId: number;
+  defaultUnitTypeId: number;
   defaultQuantity: number;
 }
 
 const COMMON_PRODUCTS: CommonProduct[] = [
-  { name: 'Leche', category: Category.LACTEOS, defaultUnit: UnitType.LITRO, defaultQuantity: 1 },
-  { name: 'Huevos', category: Category.OTROS, defaultUnit: UnitType.DOCENA, defaultQuantity: 1 },
-  { name: 'Arroz', category: Category.CEREALES, defaultUnit: UnitType.KILOGRAMO, defaultQuantity: 1 },
-  { name: 'Frijoles', category: Category.ENLATADOS, defaultUnit: UnitType.KILOGRAMO, defaultQuantity: 1 },
-  { name: 'Pan', category: Category.PANADERIA, defaultUnit: UnitType.PAQUETE, defaultQuantity: 1 },
-  { name: 'Aceite', category: Category.CONDIMENTOS, defaultUnit: UnitType.LITRO, defaultQuantity: 1 },
-  { name: 'Azucar', category: Category.CONDIMENTOS, defaultUnit: UnitType.KILOGRAMO, defaultQuantity: 1 },
-  { name: 'Sal', category: Category.CONDIMENTOS, defaultUnit: UnitType.KILOGRAMO, defaultQuantity: 1 },
-  { name: 'Pasta', category: Category.CEREALES, defaultUnit: UnitType.PAQUETE, defaultQuantity: 1 },
-  { name: 'Atun', category: Category.ENLATADOS, defaultUnit: UnitType.UNIDAD, defaultQuantity: 1 },
+  { name: 'Leche', categoryId: 1, defaultUnitTypeId: 2, defaultQuantity: 1 },
+  { name: 'Huevos', categoryId: 1, defaultUnitTypeId: 5, defaultQuantity: 12 },
+  { name: 'Arroz', categoryId: 4, defaultUnitTypeId: 4, defaultQuantity: 1 },
+  { name: 'Frijoles', categoryId: 4, defaultUnitTypeId: 4, defaultQuantity: 1 },
+  { name: 'Pan', categoryId: 10, defaultUnitTypeId: 5, defaultQuantity: 1 },
+  { name: 'Aceite', categoryId: 9, defaultUnitTypeId: 2, defaultQuantity: 1 },
+  { name: 'Azucar', categoryId: 9, defaultUnitTypeId: 4, defaultQuantity: 1 },
+  { name: 'Sal', categoryId: 9, defaultUnitTypeId: 4, defaultQuantity: 1 },
+  { name: 'Pasta', categoryId: 4, defaultUnitTypeId: 4, defaultQuantity: 0.2 },
+  { name: 'Atun', categoryId: 8, defaultUnitTypeId: 5, defaultQuantity: 1 },
 ];
 
 export default function WelcomeWizard() {
@@ -93,8 +94,8 @@ export default function WelcomeWizard() {
       try {
         await createProduct.mutateAsync({
           name: product.name,
-          category: product.category,
-          defaultUnit: product.defaultUnit,
+          categoryId: product.categoryId,
+          defaultUnitTypeId: product.defaultUnitTypeId,
           defaultQuantity: product.defaultQuantity,
         });
       } catch {

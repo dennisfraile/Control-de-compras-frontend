@@ -1,46 +1,57 @@
-import { Box, useTheme, useMediaQuery } from '@mui/material';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { Box } from '@mui/material';
 import PageHeader from '../components/common/PageHeader';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import EmptyState from '../components/common/EmptyState';
+import ResponsiveTable, { Column } from '../components/common/ResponsiveTable';
 import { useCommunityPrices } from '../hooks/usePrices';
 import { PriceSuggestion } from '../types/price.types';
 import { formatCurrency, formatDateTime } from '../utils/format';
 
 export default function CommunityPricesPage() {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { data: prices, isLoading } = useCommunityPrices();
 
-  const columns: GridColDef[] = [
+  const columns: Column<PriceSuggestion>[] = [
     {
-      field: 'productName',
-      headerName: 'Producto',
-      flex: 1,
-      minWidth: isMobile ? 80 : 150,
+      key: 'productName',
+      header: 'Producto',
+      align: 'left',
+      render: (row) => row.productName,
     },
     {
-      field: 'storeName',
-      headerName: 'Tienda',
-      flex: 1,
-      minWidth: isMobile ? 80 : 150,
+      key: 'storeName',
+      header: 'Tienda',
+      align: 'center',
+      render: (row) => row.storeName,
     },
     {
-      field: 'price',
-      headerName: 'Precio',
-      flex: 0.7,
-      minWidth: isMobile ? 80 : 120,
-      type: 'number',
-      renderCell: (params) => formatCurrency(params.value),
+      key: 'price',
+      header: 'Precio',
+      align: 'center',
+      render: (row) => formatCurrency(row.price),
     },
     {
-      field: 'reportedAt',
-      headerName: 'Reportado',
-      flex: 0.8,
-      minWidth: isMobile ? 100 : 150,
-      valueGetter: (_value: string, row: PriceSuggestion) => formatDateTime(row.reportedAt),
+      key: 'reportedAt',
+      header: 'Reportado',
+      align: 'center',
+      hideOnMobile: true,
+      render: (row) => formatDateTime(row.reportedAt),
     },
   ];
+
+  const mobileCardRender = (price: PriceSuggestion) => (
+    <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-700">
+      <div className="flex items-start justify-between">
+        <div className="flex-1 min-w-0">
+          <div className="font-semibold text-gray-900 dark:text-gray-100 truncate">
+            {price.productName}
+          </div>
+          <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            {price.storeName} · {formatCurrency(price.price)}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 
   if (isLoading) return <LoadingSpinner />;
 
@@ -53,19 +64,12 @@ export default function CommunityPricesPage() {
       />
 
       {prices && prices.length > 0 ? (
-        <Box sx={{ height: { xs: 350, sm: 450, md: 600 }, width: '100%' }}>
-          <DataGrid
-            rows={prices}
-            columns={columns}
-            pageSizeOptions={[10, 25, 50]}
-            initialState={{
-              pagination: { paginationModel: { pageSize: 25 } },
-              sorting: { sortModel: [{ field: 'reportedAt', sort: 'desc' }] },
-            }}
-            columnVisibilityModel={{ reportedAt: !isMobile }}
-            disableRowSelectionOnClick
-          />
-        </Box>
+        <ResponsiveTable
+          columns={columns}
+          data={prices}
+          keyExtractor={(p) => p.id}
+          mobileCardRender={mobileCardRender}
+        />
       ) : (
         <EmptyState
           title="Sin precios comunitarios"

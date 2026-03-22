@@ -1,15 +1,16 @@
 import { useState } from 'react';
-import { Box, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField, MenuItem, Chip, useTheme, useMediaQuery } from '@mui/material';
-import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
-import { Edit as EditIcon, Delete as DeleteIcon, FileDownload as FileDownloadIcon } from '@mui/icons-material';
+import { Box, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField, MenuItem } from '@mui/material';
+import { FileDownload as FileDownloadIcon } from '@mui/icons-material';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { Pencil, Trash2 } from 'lucide-react';
 import PageHeader from '../components/common/PageHeader';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import ConfirmDialog from '../components/common/ConfirmDialog';
 import EmptyState from '../components/common/EmptyState';
 import DependencyBanner from '../components/onboarding/DependencyBanner';
+import ResponsiveTable, { Column } from '../components/common/ResponsiveTable';
 import {
   useInventory,
   useCreateInventoryEntry,
@@ -31,8 +32,6 @@ const inventorySchema = z.object({
 type InventoryFormData = z.infer<typeof inventorySchema>;
 
 export default function InventoryPage() {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { data: inventory, isLoading } = useInventory();
   const { data: products } = useProducts();
   const createEntry = useCreateInventoryEntry();
@@ -136,85 +135,106 @@ export default function InventoryPage() {
     }
   };
 
-  const columns: GridColDef[] = [
+  const getStatusBadge = (row: InventoryEntry) => {
+    const isLow = row.currentQuantity <= row.minimumThreshold;
+    if (isLow) {
+      return (
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300">
+          Stock bajo
+        </span>
+      );
+    }
+    return (
+      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300">
+        OK
+      </span>
+    );
+  };
+
+  const columns: Column<InventoryEntry>[] = [
     {
-      field: 'productName',
-      headerName: 'Producto',
-      flex: 1,
-      minWidth: isMobile ? 100 : 150,
-      valueGetter: (_value: unknown, row: InventoryEntry) =>
-        row.productName ? `${row.productName}${row.productBrand ? ` (${row.productBrand})` : ''}` : 'N/A',
-      renderCell: isMobile
-        ? (params) => (
-            <Box sx={{ maxWidth: 120, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-              {params.value}
-            </Box>
-          )
-        : undefined,
+      key: 'productName',
+      header: 'Producto',
+      align: 'left',
+      render: (row) =>
+        row.productName
+          ? `${row.productName}${row.productBrand ? ` (${row.productBrand})` : ''}`
+          : 'N/A',
     },
     {
-      field: 'currentQuantity',
-      headerName: 'Stock actual',
-      flex: 0.5,
-      minWidth: isMobile ? 80 : 120,
-      type: 'number',
-      valueGetter: (_value: unknown, row: InventoryEntry) =>
-        `${row.currentQuantity} ${row.unitAbbreviation ?? ''}`,
+      key: 'currentQuantity',
+      header: 'Stock actual',
+      align: 'center',
+      render: (row) => `${row.currentQuantity} ${row.unitAbbreviation ?? ''}`,
     },
     {
-      field: 'minimumThreshold',
-      headerName: 'Stock minimo',
-      flex: 0.5,
-      minWidth: isMobile ? 80 : 120,
-      type: 'number',
+      key: 'minimumThreshold',
+      header: 'Stock minimo',
+      align: 'center',
+      hideOnMobile: true,
+      render: (row) => row.minimumThreshold,
     },
     {
-      field: 'estado',
-      headerName: 'Estado',
-      flex: 0.5,
-      minWidth: isMobile ? 80 : 120,
-      renderCell: (params) => {
-        const row = params.row as InventoryEntry;
-        const isLow = row.currentQuantity <= row.minimumThreshold;
-        return isLow ? (
-          <Chip label="Stock bajo" color="error" size="small" />
-        ) : (
-          <Chip label="OK" color="success" size="small" />
-        );
-      },
+      key: 'estado',
+      header: 'Estado',
+      align: 'center',
+      render: (row) => getStatusBadge(row),
     },
     {
-      field: 'expirationDateUtc',
-      headerName: 'Vencimiento',
-      flex: 0.7,
-      minWidth: isMobile ? 90 : 120,
-      valueGetter: (_value: string | undefined, row: InventoryEntry) =>
-        row.expirationDateUtc ? formatDate(row.expirationDateUtc) : 'N/A',
-    },
-    {
-      field: 'actions',
-      type: 'actions',
-      headerName: 'Acciones',
-      width: isMobile ? 80 : 100,
-      getActions: (params) => [
-        <GridActionsCellItem
-          icon={<EditIcon />}
-          label="Editar"
-          onClick={() => handleOpenEdit(params.row as InventoryEntry)}
-          sx={{ minHeight: 44, minWidth: 44 }}
-        />,
-        <GridActionsCellItem
-          icon={<DeleteIcon />}
-          label="Eliminar"
-          onClick={() => {
-            setEntryToDelete(params.row.id);
-            setDeleteDialogOpen(true);
-          }}
-          sx={{ minHeight: 44, minWidth: 44 }}
-        />,
-      ],
+      key: 'expirationDateUtc',
+      header: 'Vencimiento',
+      align: 'center',
+      hideOnMobile: true,
+      render: (row) => row.expirationDateUtc ? formatDate(row.expirationDateUtc) : 'N/A',
     },
   ];
+
+  const mobileCardRender = (entry: InventoryEntry) => {
+    const isLow = entry.currentQuantity <= entry.minimumThreshold;
+    return (
+      <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-700">
+        <div className="flex items-start justify-between">
+          <div className="flex-1 min-w-0">
+            <div className="font-semibold text-gray-900 dark:text-gray-100 truncate">
+              {entry.productName ?? 'N/A'}
+            </div>
+            <div className="text-sm text-gray-500 dark:text-gray-400 mt-1 flex items-center gap-2">
+              <span>{entry.currentQuantity} {entry.unitAbbreviation ?? ''}</span>
+              <span>·</span>
+              {isLow ? (
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300">
+                  Stock bajo
+                </span>
+              ) : (
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300">
+                  OK
+                </span>
+              )}
+            </div>
+          </div>
+          <div className="flex items-center gap-1 ml-2 shrink-0">
+            <button
+              onClick={() => handleOpenEdit(entry)}
+              className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              title="Editar"
+            >
+              <Pencil size={18} className="text-blue-600" />
+            </button>
+            <button
+              onClick={() => {
+                setEntryToDelete(entry.id);
+                setDeleteDialogOpen(true);
+              }}
+              className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              title="Eliminar"
+            >
+              <Trash2 size={18} className="text-red-600" />
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   if (isLoading) return <LoadingSpinner />;
 
@@ -247,26 +267,17 @@ export default function InventoryPage() {
       </PageHeader>
 
       {inventory && inventory.length > 0 ? (
-        <Box sx={{ height: { xs: 350, sm: 450, md: 600 }, width: '100%' }}>
-          <DataGrid
-            rows={inventory}
-            columns={columns}
-            pageSizeOptions={[10, 25, 50]}
-            initialState={{
-              pagination: { paginationModel: { pageSize: 10 } },
-            }}
-            columnVisibilityModel={{ expirationDateUtc: !isMobile }}
-            disableRowSelectionOnClick
-            getRowClassName={(params) =>
-              params.row.isLowStock ? 'low-stock-row' : ''
-            }
-            sx={{
-              '& .low-stock-row': {
-                bgcolor: 'rgba(239, 83, 80, 0.08)',
-              },
-            }}
-          />
-        </Box>
+        <ResponsiveTable
+          columns={columns}
+          data={inventory}
+          keyExtractor={(e) => e.id}
+          onEdit={handleOpenEdit}
+          onDelete={(e) => {
+            setEntryToDelete(e.id);
+            setDeleteDialogOpen(true);
+          }}
+          mobileCardRender={mobileCardRender}
+        />
       ) : (
         <EmptyState
           title="Inventario vacio"
