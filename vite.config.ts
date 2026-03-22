@@ -10,8 +10,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.png', 'logo.png'],
       manifest: {
-        name: 'Mis Compras - FraileDev',
-        short_name: 'Mis Compras',
+        name: 'Mis compras - FraileDev',
+        short_name: 'Mis compras',
         description: 'Aplicación para el control y seguimiento de compras del hogar',
         theme_color: '#3b82f6',
         background_color: '#ffffff',

@@ -158,9 +158,9 @@ export default function Layout({ children }: { children: ReactNode }) {
                   <Menu size={24} className="text-gray-600 dark:text-gray-300" />
                 )}
               </button>
-              <img src="/logo.png" alt="Mis Compras" className="h-8 w-8 rounded-full object-cover" />
+              <img src="/logo.png" alt="Mis compras" className="h-8 w-8 rounded-full object-cover" />
               <h1 className="text-lg sm:text-xl font-bold text-gray-800 dark:text-white">
-                Mis Compras
+                Mis compras
               </h1>
             </div>
 
