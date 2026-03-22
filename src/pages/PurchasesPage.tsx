@@ -144,7 +144,8 @@ export default function PurchasesPage() {
   if (isLoading) return <LoadingSpinner />;
 
   return (
-    <Box>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="max-w-7xl mx-auto px-4 py-8">
       <DependencyBanner
         show={!hasStores || !hasProducts}
         message="Para registrar compras necesitas al menos una tienda y productos."
@@ -201,6 +202,7 @@ export default function PurchasesPage() {
         }}
         loading={deletePurchase.isPending}
       />
-    </Box>
+      </div>
+    </div>
   );
 }

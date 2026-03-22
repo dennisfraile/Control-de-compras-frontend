@@ -187,7 +187,8 @@ export default function ProductsPage() {
   if (isLoading) return <LoadingSpinner />;
 
   return (
-    <Box>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="max-w-7xl mx-auto px-4 py-8">
       <PageHeader
         title="Productos"
         helpKey="products"
@@ -343,6 +344,7 @@ export default function ProductsPage() {
         }}
         loading={deleteProduct.isPending}
       />
-    </Box>
+      </div>
+    </div>
   );
 }

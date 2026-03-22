@@ -326,7 +326,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         </aside>
 
         {/* Main content */}
-        <main className="flex-1 transition-all duration-300 p-3 sm:p-4 md:p-6">
+        <main className="flex-1 transition-all duration-300">
           {children}
         </main>
       </div>
