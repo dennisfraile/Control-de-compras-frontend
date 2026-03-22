@@ -7,7 +7,8 @@ export default function ProfilePage() {
   if (!user) return null;
 
   return (
-    <div>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="max-w-3xl mx-auto px-4 py-8">
       <PageHeader title="Mi perfil" helpKey="profile" subtitle="Informacion de tu cuenta" />
 
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-8 max-w-lg mx-auto text-center animate-fade-in">
@@ -44,6 +45,7 @@ export default function ProfilePage() {
             </p>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

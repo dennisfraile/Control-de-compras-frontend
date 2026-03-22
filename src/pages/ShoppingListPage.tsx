@@ -630,7 +630,8 @@ export default function ShoppingListPage() {
   // Empty
   if (!rawItems || rawItems.length === 0) {
     return (
-      <div>
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+        <div className="max-w-7xl mx-auto px-4 py-8">
         <DependencyBanner
           show={!hasProducts || !hasInventory}
           message="La lista de compras necesita productos e inventario registrados para generar sugerencias."
@@ -664,6 +665,7 @@ export default function ShoppingListPage() {
             {generateList.isPending ? 'Generando...' : 'Generar lista'}
           </button>
         </div>
+        </div>
       </div>
     );
   }
@@ -675,6 +677,8 @@ export default function ShoppingListPage() {
   ];
 
   return (
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="max-w-7xl mx-auto px-4 py-8">
     <div className="pb-24 lg:pb-0">
       <DependencyBanner
         show={!hasProducts || !hasInventory}
@@ -902,6 +906,8 @@ export default function ShoppingListPage() {
             </button>
           </div>
         </div>
+      </div>
+    </div>
       </div>
     </div>
   );

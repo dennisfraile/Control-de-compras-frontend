@@ -59,7 +59,8 @@ export default function SavingsPage() {
   const changeIsNegative = (data?.monthOverMonthChange ?? 0) < 0;
 
   return (
-    <div>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="max-w-7xl mx-auto px-4 py-8">
       <DependencyBanner
         show={!hasPurchases}
         message="Necesitas registrar compras para ver el analisis de ahorro."
@@ -230,6 +231,7 @@ export default function SavingsPage() {
             </table>
           </div>
         )}
+      </div>
       </div>
     </div>
   );
