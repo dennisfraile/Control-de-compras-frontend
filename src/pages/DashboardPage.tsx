@@ -79,7 +79,7 @@ export default function DashboardPage() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mb-6">
         <StatCard
-          title="Gasto del Mes"
+          title="Gasto del mes"
           subtitle="Total gastado este mes"
           value={summary ? formatCurrency(summary.totalSpent) : '$0'}
           icon={<DollarSign className="w-6 h-6 text-white" />}
@@ -88,7 +88,7 @@ export default function DashboardPage() {
           loading={summaryLoading}
         />
         <StatCard
-          title="Stock Bajo"
+          title="Stock bajo"
           subtitle="Productos por acabarse"
           value={lowStockItems?.length ?? 0}
           icon={<AlertTriangle className="w-6 h-6 text-white" />}
@@ -97,7 +97,7 @@ export default function DashboardPage() {
           loading={lowStockLoading}
         />
         <StatCard
-          title="Lista de Compras"
+          title="Lista de compras"
           subtitle="Items pendientes"
           value={pendingItems}
           icon={<ShoppingCart className="w-6 h-6 text-white" />}
@@ -115,7 +115,7 @@ export default function DashboardPage() {
           loading={lowStockLoading}
         />
         <StatCard
-          title="Mes Anterior"
+          title="Mes anterior"
           subtitle="Variacion vs mes pasado"
           value="--"
           icon={<TrendingUp className="w-6 h-6 text-white" />}

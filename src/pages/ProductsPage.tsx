@@ -164,7 +164,7 @@ export default function ProductsPage() {
         title="Productos"
         helpKey="products"
         subtitle="Gestiona tu catalogo de productos"
-        actionLabel="Nuevo Producto"
+        actionLabel="Nuevo producto"
         onAction={handleOpenCreate}
       />
 
@@ -187,7 +187,7 @@ export default function ProductsPage() {
           description="Agrega tu primer producto para comenzar"
           action={
             <Button variant="contained" onClick={handleOpenCreate}>
-              Agregar Producto
+              Agregar producto
             </Button>
           }
         />
@@ -196,7 +196,7 @@ export default function ProductsPage() {
       <Dialog open={dialogOpen} onClose={handleClose} maxWidth="sm" fullWidth>
         <form onSubmit={handleSubmit(onSubmit)}>
           <DialogTitle>
-            {editingProduct ? 'Editar Producto' : 'Nuevo Producto'}
+            {editingProduct ? 'Editar producto' : 'Nuevo producto'}
           </DialogTitle>
           <DialogContent>
             <Box display="flex" flexDirection="column" gap={2} mt={1}>
@@ -306,7 +306,7 @@ export default function ProductsPage() {
 
       <ConfirmDialog
         open={deleteDialogOpen}
-        title="Eliminar Producto"
+        title="Eliminar producto"
         message="Estas seguro de eliminar este producto? Esta accion no se puede deshacer."
         confirmLabel="Eliminar"
         onConfirm={handleDeleteConfirm}

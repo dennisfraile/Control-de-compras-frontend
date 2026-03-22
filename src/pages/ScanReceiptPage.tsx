@@ -98,7 +98,7 @@ export default function ScanReceiptPage() {
   return (
     <div>
       <PageHeader
-        title="Escanear Ticket"
+        title="Escanear ticket"
         helpKey="scanReceipt"
         subtitle="Sube una foto de tu ticket de compra para registrarla automaticamente"
       />

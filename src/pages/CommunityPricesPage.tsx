@@ -47,7 +47,7 @@ export default function CommunityPricesPage() {
   return (
     <Box>
       <PageHeader
-        title="Precios de la Comunidad"
+        title="Precios de la comunidad"
         helpKey="community"
         subtitle="Precios reportados anonimamente por otros usuarios"
       />

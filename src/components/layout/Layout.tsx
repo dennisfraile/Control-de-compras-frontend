@@ -103,9 +103,9 @@ export default function Layout({ children }: { children: ReactNode }) {
       icon: ShoppingCart,
       defaultOpen: true,
       items: [
-        { label: 'Lista de Compras', path: '/shopping-list', icon: ClipboardList },
+        { label: 'Lista de compras', path: '/shopping-list', icon: ClipboardList },
         { label: 'Compras', path: '/purchases', icon: ShoppingCart },
-        { label: 'Escanear Ticket', path: '/scan-receipt', icon: Camera },
+        { label: 'Escanear ticket', path: '/scan-receipt', icon: Camera },
         { label: 'Plantillas', path: '/templates', icon: FileText },
       ],
     },
@@ -180,7 +180,7 @@ export default function Layout({ children }: { children: ReactNode }) {
               <button
                 onClick={() => navigate('/ayuda')}
                 className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors min-h-[44px]"
-                title="Centro de Ayuda"
+                title="Centro de ayuda"
               >
                 <HelpCircle size={20} className="text-gray-600 dark:text-gray-300" />
               </button>
@@ -223,7 +223,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                       className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                     >
                       <User size={16} />
-                      Mi Perfil
+                      Mi perfil
                     </button>
                     <div className="border-t border-gray-100 dark:border-gray-700 mt-1 pt-1">
                       <button
@@ -231,7 +231,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                         className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                       >
                         <LogOut size={16} />
-                        Cerrar Sesion
+                        Cerrar sesion
                       </button>
                     </div>
                   </div>

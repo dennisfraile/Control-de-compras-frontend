@@ -82,12 +82,12 @@ export default function PriceComparisonPage() {
   return (
     <Box>
       <PageHeader
-        title="Comparacion de Precios"
+        title="Comparacion de precios"
         helpKey="prices"
         subtitle="Analiza la evolucion de precios por producto y tienda"
       >
         <Button variant="outlined" onClick={() => navigate('/prices/community')}>
-          Precios de la Comunidad
+          Precios de la comunidad
         </Button>
       </PageHeader>
 
@@ -119,7 +119,7 @@ export default function PriceComparisonPage() {
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
-                Historial de Precios
+                Historial de precios
               </Typography>
               <ResponsiveContainer width="100%" height={isMobile ? 250 : 400}>
                 <LineChart

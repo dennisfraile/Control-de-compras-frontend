@@ -106,7 +106,7 @@ export default function TemplatesPage() {
   return (
     <div>
       <PageHeader
-        title="Plantillas de Compra"
+        title="Plantillas de compra"
         helpKey="templates"
         subtitle="Crea y reutiliza listas de compras frecuentes"
         actionLabel="Crear plantilla"
@@ -120,7 +120,7 @@ export default function TemplatesPage() {
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between p-6 pb-0">
               <h2 className="text-lg font-bold text-gray-800 dark:text-white">
-                Nueva Plantilla
+                Nueva plantilla
               </h2>
               <button
                 onClick={resetForm}

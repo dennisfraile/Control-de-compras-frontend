@@ -28,7 +28,7 @@ export default function RecipesPage() {
   return (
     <div>
       <PageHeader
-        title="Sugerencias de Recetas"
+        title="Sugerencias de recetas"
         helpKey="recipes"
         subtitle="Recetas basadas en tu inventario actual"
       />

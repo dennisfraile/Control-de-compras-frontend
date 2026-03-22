@@ -30,7 +30,7 @@ export default function NotFoundPage() {
         onClick={() => navigate('/')}
         size="large"
       >
-        Ir al Inicio
+        Ir al inicio
       </Button>
     </Box>
   );

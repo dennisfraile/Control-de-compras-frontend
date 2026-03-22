@@ -127,7 +127,7 @@ export default function PurchasesPage() {
         title="Compras"
         helpKey="purchases"
         subtitle="Historial de compras realizadas"
-        actionLabel="Nueva Compra"
+        actionLabel="Nueva compra"
         onAction={() => navigate('/purchases/new')}
       >
         <Button
@@ -160,7 +160,7 @@ export default function PurchasesPage() {
           description="Registra tu primera compra para comenzar a llevar el control"
           action={
             <Button variant="contained" onClick={() => navigate('/purchases/new')}>
-              Registrar Compra
+              Registrar compra
             </Button>
           }
         />
@@ -168,7 +168,7 @@ export default function PurchasesPage() {
 
       <ConfirmDialog
         open={deleteDialogOpen}
-        title="Eliminar Compra"
+        title="Eliminar compra"
         message="Estas seguro de eliminar esta compra? Esta accion no se puede deshacer."
         confirmLabel="Eliminar"
         onConfirm={handleDeleteConfirm}

@@ -42,7 +42,7 @@ export const sectionHelp: Record<string, SectionHelp> = {
     ],
   },
   shoppingList: {
-    title: 'Lista de Compras',
+    title: 'Lista de compras',
     description: 'Lista inteligente que sugiere que comprar basandose en tu inventario y consumo.',
     tips: [
       'La lista se genera automaticamente analizando tu stock actual y tu historial de consumo.',
@@ -52,7 +52,7 @@ export const sectionHelp: Record<string, SectionHelp> = {
     ],
   },
   prices: {
-    title: 'Comparacion de Precios',
+    title: 'Comparacion de precios',
     description: 'Compara precios de productos entre diferentes tiendas y meses.',
     tips: [
       'Selecciona un producto para ver como ha variado su precio en el tiempo.',
@@ -61,7 +61,7 @@ export const sectionHelp: Record<string, SectionHelp> = {
     ],
   },
   community: {
-    title: 'Precios de Comunidad',
+    title: 'Precios de comunidad',
     description: 'Precios reportados de forma anonima por otros usuarios.',
     tips: [
       'Los precios son anonimos, nunca se muestra quien los reporto.',
@@ -88,7 +88,7 @@ export const sectionHelp: Record<string, SectionHelp> = {
     ],
   },
   restockAlerts: {
-    title: 'Alertas de Reabastecimiento',
+    title: 'Alertas de reabastecimiento',
     description: 'Alertas inteligentes basadas en tu patron de consumo real.',
     tips: [
       'Las alertas criticas (rojo) significan que el producto se acabara en menos de 3 dias.',
@@ -97,7 +97,7 @@ export const sectionHelp: Record<string, SectionHelp> = {
     ],
   },
   scanReceipt: {
-    title: 'Escanear Ticket',
+    title: 'Escanear ticket',
     description: 'Escanea un ticket de compra con la camara para registrar los productos automaticamente.',
     tips: [
       'Toma la foto con buena iluminacion y sin arrugas en el ticket.',
@@ -106,7 +106,7 @@ export const sectionHelp: Record<string, SectionHelp> = {
     ],
   },
   templates: {
-    title: 'Plantillas de Compra',
+    title: 'Plantillas de compra',
     description: 'Guarda listas predefinidas de productos que compras regularmente.',
     tips: [
       'Crea una plantilla para tu "compra semanal basica" con los productos que siempre llevas.',
@@ -123,7 +123,7 @@ export const sectionHelp: Record<string, SectionHelp> = {
     ],
   },
   profile: {
-    title: 'Mi Perfil',
+    title: 'Mi perfil',
     description: 'Informacion de tu cuenta y configuracion personal.',
     tips: [
       'Tu perfil se sincroniza con tu cuenta de Google.',

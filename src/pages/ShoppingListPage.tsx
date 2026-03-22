@@ -48,7 +48,7 @@ const REASON_META: Record<
   }
 > = {
   OutOfStock: {
-    label: 'Sin Stock',
+    label: 'Sin stock',
     badgeBg: 'bg-red-100 dark:bg-red-900/40',
     badgeText: 'text-red-700 dark:text-red-300',
     headerBg: 'bg-red-50 dark:bg-red-900/20',
@@ -58,7 +58,7 @@ const REASON_META: Record<
     icon: XCircle,
   },
   LowStock: {
-    label: 'Stock Bajo',
+    label: 'Stock bajo',
     badgeBg: 'bg-amber-100 dark:bg-amber-900/40',
     badgeText: 'text-amber-700 dark:text-amber-300',
     headerBg: 'bg-amber-50 dark:bg-amber-900/20',
@@ -68,7 +68,7 @@ const REASON_META: Record<
     icon: AlertTriangle,
   },
   BelowAverage: {
-    label: 'Bajo Promedio',
+    label: 'Bajo promedio',
     badgeBg: 'bg-blue-100 dark:bg-blue-900/40',
     badgeText: 'text-blue-700 dark:text-blue-300',
     headerBg: 'bg-blue-50 dark:bg-blue-900/20',
@@ -78,7 +78,7 @@ const REASON_META: Record<
     icon: TrendingDown,
   },
   FrequentlyPurchased: {
-    label: 'Compra Frecuente',
+    label: 'Compra frecuente',
     badgeBg: 'bg-purple-100 dark:bg-purple-900/40',
     badgeText: 'text-purple-700 dark:text-purple-300',
     headerBg: 'bg-purple-50 dark:bg-purple-900/20',
@@ -419,7 +419,7 @@ function SummaryPanel({
 
       {/* Total cost */}
       <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl shadow-md p-5 text-white">
-        <p className="text-sm text-blue-100 mb-1">Total Estimado</p>
+        <p className="text-sm text-blue-100 mb-1">Total estimado</p>
         <p className="text-3xl font-bold tracking-tight">
           {formatCurrency(totalCost)}
         </p>
@@ -433,7 +433,7 @@ function SummaryPanel({
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-5 border border-gray-100 dark:border-gray-700">
           <h3 className="font-semibold text-gray-800 dark:text-white flex items-center gap-2 mb-4">
             <Store className="w-5 h-5 text-indigo-500" />
-            Por Tienda
+            Por tienda
           </h3>
           <div className="space-y-3">
             {storeGroups.map(([store, data]) => (
@@ -625,7 +625,7 @@ export default function ShoppingListPage() {
     return (
       <div>
         <PageHeader
-          title="Lista de Compras"
+          title="Lista de compras"
           helpKey="shoppingList"
           subtitle="Sugerencias inteligentes basadas en tu inventario"
         />
@@ -648,7 +648,7 @@ export default function ShoppingListPage() {
               rounded-xl px-6 py-3 text-sm transition-colors disabled:opacity-50"
           >
             <Sparkles className="w-4 h-4" />
-            {generateList.isPending ? 'Generando...' : 'Generar Lista'}
+            {generateList.isPending ? 'Generando...' : 'Generar lista'}
           </button>
         </div>
       </div>
@@ -658,14 +658,14 @@ export default function ShoppingListPage() {
   const filterTabs: { key: FilterTab; label: string }[] = [
     { key: 'Todos', label: 'Todos' },
     { key: 'Urgentes', label: 'Urgentes' },
-    { key: 'PorTienda', label: 'Por Tienda' },
+    { key: 'PorTienda', label: 'Por tienda' },
   ];
 
   return (
     <div className="pb-24 lg:pb-0">
       {/* Header */}
       <PageHeader
-        title="Lista de Compras"
+        title="Lista de compras"
         helpKey="shoppingList"
         subtitle="Sugerencias inteligentes basadas en tu inventario"
       >
@@ -690,7 +690,7 @@ export default function ShoppingListPage() {
         <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-xl p-4 text-white shadow-md">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs text-blue-100">Total Estimado</p>
+              <p className="text-xs text-blue-100">Total estimado</p>
               <p className="text-2xl font-bold">{formatCurrency(totalCost)}</p>
             </div>
             <div className="text-right">

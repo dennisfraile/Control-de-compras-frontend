@@ -57,7 +57,7 @@ export default function SavingsPage() {
   return (
     <div>
       <PageHeader
-        title="Analisis de Ahorro"
+        title="Analisis de ahorro"
         helpKey="savings"
         subtitle="Compara tus gastos y encuentra donde ahorrar"
       />

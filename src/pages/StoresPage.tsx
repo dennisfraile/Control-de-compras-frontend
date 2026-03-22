@@ -141,7 +141,7 @@ export default function StoresPage() {
         title="Tiendas"
         helpKey="stores"
         subtitle="Gestiona las tiendas donde realizas tus compras"
-        actionLabel="Nueva Tienda"
+        actionLabel="Nueva tienda"
         onAction={handleOpenCreate}
       />
 
@@ -164,7 +164,7 @@ export default function StoresPage() {
           description="Agrega tu primera tienda para comenzar"
           action={
             <Button variant="contained" onClick={handleOpenCreate}>
-              Agregar Tienda
+              Agregar tienda
             </Button>
           }
         />
@@ -173,7 +173,7 @@ export default function StoresPage() {
       <Dialog open={dialogOpen} onClose={handleClose} maxWidth="sm" fullWidth>
         <form onSubmit={handleSubmit(onSubmit)}>
           <DialogTitle>
-            {editingStore ? 'Editar Tienda' : 'Nueva Tienda'}
+            {editingStore ? 'Editar tienda' : 'Nueva tienda'}
           </DialogTitle>
           <DialogContent>
             <Box display="flex" flexDirection="column" gap={2} mt={1}>
@@ -217,7 +217,7 @@ export default function StoresPage() {
                 name="website"
                 control={control}
                 render={({ field }) => (
-                  <TextField {...field} label="Sitio Web" fullWidth />
+                  <TextField {...field} label="Sitio web" fullWidth />
                 )}
               />
               <Controller
@@ -250,7 +250,7 @@ export default function StoresPage() {
 
       <ConfirmDialog
         open={deleteDialogOpen}
-        title="Eliminar Tienda"
+        title="Eliminar tienda"
         message="Estas seguro de eliminar esta tienda? Esta accion no se puede deshacer."
         confirmLabel="Eliminar"
         onConfirm={handleDeleteConfirm}

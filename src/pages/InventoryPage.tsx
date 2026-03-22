@@ -153,7 +153,7 @@ export default function InventoryPage() {
     },
     {
       field: 'currentQuantity',
-      headerName: 'Stock Actual',
+      headerName: 'Stock actual',
       flex: 0.5,
       minWidth: isMobile ? 80 : 120,
       type: 'number',
@@ -162,7 +162,7 @@ export default function InventoryPage() {
     },
     {
       field: 'minimumThreshold',
-      headerName: 'Stock Minimo',
+      headerName: 'Stock minimo',
       flex: 0.5,
       minWidth: isMobile ? 80 : 120,
       type: 'number',
@@ -176,7 +176,7 @@ export default function InventoryPage() {
         const row = params.row as InventoryEntry;
         const isLow = row.currentQuantity <= row.minimumThreshold;
         return isLow ? (
-          <Chip label="Stock Bajo" color="error" size="small" />
+          <Chip label="Stock bajo" color="error" size="small" />
         ) : (
           <Chip label="OK" color="success" size="small" />
         );
@@ -223,7 +223,7 @@ export default function InventoryPage() {
         title="Inventario"
         helpKey="inventory"
         subtitle="Control de stock de tus productos"
-        actionLabel="Agregar al Inventario"
+        actionLabel="Agregar al inventario"
         onAction={handleOpenCreate}
       >
         <Button
@@ -263,7 +263,7 @@ export default function InventoryPage() {
           description="Agrega productos a tu inventario para llevar el control de stock"
           action={
             <Button variant="contained" onClick={handleOpenCreate}>
-              Agregar al Inventario
+              Agregar al inventario
             </Button>
           }
         />
@@ -272,7 +272,7 @@ export default function InventoryPage() {
       <Dialog open={dialogOpen} onClose={handleClose} maxWidth="sm" fullWidth>
         <form onSubmit={handleSubmit(onSubmit)}>
           <DialogTitle>
-            {editingEntry ? 'Editar Inventario' : 'Agregar al Inventario'}
+            {editingEntry ? 'Editar inventario' : 'Agregar al inventario'}
           </DialogTitle>
           <DialogContent>
             <Box display="flex" flexDirection="column" gap={2} mt={1}>
@@ -305,7 +305,7 @@ export default function InventoryPage() {
                     <TextField
                       {...field}
                       type="number"
-                      label="Stock Actual"
+                      label="Stock actual"
                       error={!!errors.currentStock}
                       helperText={errors.currentStock?.message}
                       fullWidth
@@ -319,7 +319,7 @@ export default function InventoryPage() {
                     <TextField
                       {...field}
                       type="number"
-                      label="Stock Minimo"
+                      label="Stock minimo"
                       error={!!errors.minimumStock}
                       helperText={errors.minimumStock?.message}
                       fullWidth
@@ -334,7 +334,7 @@ export default function InventoryPage() {
                   <TextField
                     {...field}
                     type="date"
-                    label="Fecha de Vencimiento"
+                    label="Fecha de vencimiento"
                     InputLabelProps={{ shrink: true }}
                     fullWidth
                   />
@@ -357,7 +357,7 @@ export default function InventoryPage() {
 
       <ConfirmDialog
         open={deleteDialogOpen}
-        title="Eliminar del Inventario"
+        title="Eliminar del inventario"
         message="Estas seguro de eliminar esta entrada del inventario?"
         confirmLabel="Eliminar"
         onConfirm={handleDeleteConfirm}

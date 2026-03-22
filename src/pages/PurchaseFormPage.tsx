@@ -132,7 +132,7 @@ export default function PurchaseFormPage() {
   return (
     <Box>
       <PageHeader
-        title={isEditing ? 'Editar Compra' : 'Nueva Compra'}
+        title={isEditing ? 'Editar compra' : 'Nueva compra'}
         subtitle="Registra los detalles de tu compra"
       />
 
@@ -140,7 +140,7 @@ export default function PurchaseFormPage() {
         <Card sx={{ mb: 3 }}>
           <CardContent>
             <Typography variant="h6" gutterBottom>
-              Informacion General
+              Informacion general
             </Typography>
             <Box display="flex" gap={2} sx={{ flexDirection: { xs: 'column', md: 'row' }, flexWrap: 'wrap' }}>
               <Controller
@@ -206,7 +206,7 @@ export default function PurchaseFormPage() {
                 }
                 size="small"
               >
-                Agregar Producto
+                Agregar producto
               </Button>
             </Box>
 
@@ -267,7 +267,7 @@ export default function PurchaseFormPage() {
                         <TextField
                           {...f}
                           type="number"
-                          label="Precio Unitario"
+                          label="Precio unitario"
                           error={!!errors.items?.[index]?.unitPrice}
                           helperText={errors.items?.[index]?.unitPrice?.message}
                           sx={{ width: { xs: '100%', sm: 150 } }}
@@ -318,7 +318,7 @@ export default function PurchaseFormPage() {
             disabled={createPurchase.isPending || updatePurchase.isPending}
             sx={{ minHeight: 44 }}
           >
-            {isEditing ? 'Actualizar Compra' : 'Registrar Compra'}
+            {isEditing ? 'Actualizar compra' : 'Registrar compra'}
           </Button>
         </Box>
       </form>

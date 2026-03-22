@@ -39,7 +39,7 @@ export default function AyudaPage() {
 
   return (
     <div className="max-w-3xl mx-auto">
-      <PageHeader title="Centro de Ayuda" subtitle="Aprende a usar todas las funciones de Mis Compras" />
+      <PageHeader title="Centro de ayuda" subtitle="Aprende a usar todas las funciones de Mis compras" />
 
       {/* Tabs */}
       <div className="flex gap-2 mb-6 overflow-x-auto pb-1">
