@@ -22,6 +22,7 @@ import {
   FileText,
   ChevronDown,
   ChevronUp,
+  HelpCircle,
 } from 'lucide-react';
 import { useAuthStore } from '../../stores/auth.store';
 import { useLogout } from '../../hooks/useAuth';
@@ -174,6 +175,14 @@ export default function Layout({ children }: { children: ReactNode }) {
                 ) : (
                   <Sun size={20} className="text-gray-300" />
                 )}
+              </button>
+
+              <button
+                onClick={() => navigate('/ayuda')}
+                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                title="Centro de Ayuda"
+              >
+                <HelpCircle size={20} className="text-gray-600 dark:text-gray-300" />
               </button>
 
               {/* Profile dropdown */}
