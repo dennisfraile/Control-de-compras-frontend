@@ -8,4 +8,6 @@ export interface ShoppingListSuggestion {
   lowestKnownPrice?: number;
   lowestPriceStore?: string;
   isChecked?: boolean;
+  packageLabel?: string;
+  packageSize: number;
 }

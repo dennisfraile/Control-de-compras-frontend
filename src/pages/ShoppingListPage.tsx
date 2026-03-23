@@ -242,8 +242,16 @@ function ItemCard({
                 <div className="text-right">
                   <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Comprar:</p>
                   <p className="text-sm font-bold text-gray-800 dark:text-white">
-                    {formatStock(item.localQty, item.unitAbbreviation)}
+                    {item.packageLabel
+                      ? `${Math.ceil(item.localQty / (item.packageSize || 1))} ${item.packageLabel}`
+                      : formatStock(item.localQty, item.unitAbbreviation)
+                    }
                   </p>
+                  {item.packageLabel && (
+                    <p className="text-xs text-gray-400 dark:text-gray-500">
+                      ({formatStock(item.localQty, item.unitAbbreviation)} total)
+                    </p>
+                  )}
                 </div>
               </div>
             </div>

@@ -9,6 +9,9 @@ export interface Product {
   defaultQuantity: number;
   barcode?: string;
   imageUrl?: string;
+  notes?: string;
+  packageSize: number;
+  packageLabel?: string;
   isGlobal?: boolean;
   createdAtUtc: string;
 }
@@ -20,6 +23,9 @@ export interface CreateProductDto {
   defaultUnitTypeId: number;
   defaultQuantity: number;
   barcode?: string;
+  notes?: string;
+  packageSize?: number;
+  packageLabel?: string;
 }
 
 export interface UpdateProductDto extends Partial<CreateProductDto> {}
