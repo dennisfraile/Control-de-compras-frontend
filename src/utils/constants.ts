@@ -85,6 +85,46 @@ export const UnitTypeAbbreviations: Record<UnitType, string> = {
   [UnitType.LIBRA]: 'lb',
 };
 
+// Maps frontend enums to backend DB IDs
+// Categories: 1=Lácteos, 2=Carnes, 3=Frutas y Verduras, 4=Cereales y Granos, 5=Bebidas, 6=Limpieza, 7=Higiene Personal, 8=Enlatados, 9=Condimentos, 10=Panadería
+export const CategoryToId: Record<Category, number> = {
+  [Category.LACTEOS]: 1,
+  [Category.CARNES]: 2,
+  [Category.FRUTAS]: 3,
+  [Category.VERDURAS]: 3,
+  [Category.PANADERIA]: 10,
+  [Category.BEBIDAS]: 5,
+  [Category.LIMPIEZA]: 6,
+  [Category.HIGIENE]: 7,
+  [Category.CONGELADOS]: 8,
+  [Category.ENLATADOS]: 8,
+  [Category.CEREALES]: 4,
+  [Category.SNACKS]: 4,
+  [Category.CONDIMENTOS]: 9,
+  [Category.OTROS]: 10,
+};
+
+// UnitTypes: 1=ml, 2=L, 3=g, 4=kg, 5=unidad, 6=pz
+export const UnitTypeToId: Record<UnitType, number> = {
+  [UnitType.UNIDAD]: 5,
+  [UnitType.KILOGRAMO]: 4,
+  [UnitType.GRAMO]: 3,
+  [UnitType.LITRO]: 2,
+  [UnitType.MILILITRO]: 1,
+  [UnitType.PAQUETE]: 5,
+  [UnitType.DOCENA]: 5,
+  [UnitType.LIBRA]: 4,
+};
+
+// Reverse maps: ID to enum
+export const IdToCategory: Record<number, Category> = Object.fromEntries(
+  Object.entries(CategoryToId).map(([k, v]) => [v, k as Category])
+) as Record<number, Category>;
+
+export const IdToUnitType: Record<number, UnitType> = Object.fromEntries(
+  Object.entries(UnitTypeToId).map(([k, v]) => [v, k as UnitType])
+) as Record<number, UnitType>;
+
 export const DRAWER_WIDTH = 260;
 
 export const QUERY_KEYS = {

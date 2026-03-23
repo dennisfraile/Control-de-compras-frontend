@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Box, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField, MenuItem, Tooltip } from '@mui/material';
+import { Box, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField, MenuItem, Tooltip, Autocomplete, createFilterOptions } from '@mui/material';
 import { Pencil, Trash2, Search } from 'lucide-react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -10,20 +10,45 @@ import LoadingSpinner from '../components/common/LoadingSpinner';
 import ConfirmDialog from '../components/common/ConfirmDialog';
 import EmptyState from '../components/common/EmptyState';
 import ResponsiveTable, { Column } from '../components/common/ResponsiveTable';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useProducts, useCreateProduct, useUpdateProduct, useDeleteProduct } from '../hooks/useProducts';
 import { Product, CreateProductDto } from '../types/product.types';
-import { Category, UnitType, CategoryLabels, UnitTypeLabels, UnitTypeAbbreviations } from '../utils/constants';
+// Constants imported if needed elsewhere
+
+// Fallback categories if API hasn't loaded
+const FALLBACK_CATEGORIES = [
+  { id: 1, name: 'Lácteos' }, { id: 2, name: 'Carnes' }, { id: 3, name: 'Frutas y verduras' },
+  { id: 4, name: 'Cereales y granos' }, { id: 5, name: 'Bebidas' }, { id: 6, name: 'Limpieza' },
+  { id: 7, name: 'Higiene personal' }, { id: 8, name: 'Enlatados' }, { id: 9, name: 'Condimentos' },
+  { id: 10, name: 'Panadería' },
+];
+
+const brandFilter = createFilterOptions<string>({
+  ignoreCase: true,
+  ignoreAccents: true,
+  trim: true,
+});
+
+const UNIT_TYPES = [
+  { id: 1, name: 'Mililitros (ml)' },
+  { id: 2, name: 'Litros (L)' },
+  { id: 3, name: 'Gramos (g)' },
+  { id: 4, name: 'Kilogramos (kg)' },
+  { id: 5, name: 'Unidad' },
+  { id: 6, name: 'Pieza' },
+];
 import apiClient from '../api/client';
 
 const productSchema = z.object({
   name: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),
   brand: z.string().optional(),
-  category: z.nativeEnum(Category, { errorMap: () => ({ message: 'Selecciona una categoria' }) }),
-  defaultUnit: z.nativeEnum(UnitType, { errorMap: () => ({ message: 'Selecciona una unidad' }) }),
+  categoryId: z.coerce.number().min(1, 'Selecciona una categoria'),
+  defaultUnitTypeId: z.coerce.number().min(1, 'Selecciona una unidad'),
   defaultQuantity: z.coerce.number().min(0.01, 'La cantidad debe ser mayor a 0'),
-  purchaseFrequency: z.string().optional(),
   notes: z.string().optional(),
   barcode: z.string().optional(),
+  packageLabel: z.string().optional(),
+  packageSize: z.coerce.number().optional(),
 });
 
 type ProductFormData = z.infer<typeof productSchema>;
@@ -34,27 +59,44 @@ export default function ProductsPage() {
   const updateProduct = useUpdateProduct();
   const deleteProduct = useDeleteProduct();
 
+  // Extract existing brands for autocomplete
+  const existingBrands = Array.from(
+    new Set((products ?? []).map((p) => p.brand).filter((b): b is string => !!b))
+  ).sort();
+
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState<string | null>(null);
   const [barcodeSearch, setBarcodeSearch] = useState('');
+  const [newCategoryDialogOpen, setNewCategoryDialogOpen] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState('');
+  const [creatingCategory, setCreatingCategory] = useState(false);
+  const queryClient = useQueryClient();
+
+  // Load categories from API
+  const { data: apiCategories } = useQuery({
+    queryKey: ['categories'],
+    queryFn: () => apiClient.get('/categories').then(r => r.data as Array<{ id: number; name: string }>),
+  });
+  const CATEGORIES = apiCategories ?? FALLBACK_CATEGORIES;
   const [highlightedProductId, setHighlightedProductId] = useState<string | null>(null);
   const [barcodeSearchOpen, setBarcodeSearchOpen] = useState(false);
   const highlightRef = useRef<HTMLDivElement>(null);
   const { enqueueSnackbar } = useSnackbar();
 
-  const { control, handleSubmit, reset, formState: { errors } } = useForm<ProductFormData>({
+  const { control, handleSubmit, reset, setValue, formState: { errors } } = useForm<ProductFormData>({
     resolver: zodResolver(productSchema),
     defaultValues: {
       name: '',
       brand: '',
-      category: Category.OTROS,
-      defaultUnit: UnitType.UNIDAD,
+      categoryId: 9,
+      defaultUnitTypeId: 5,
       defaultQuantity: 1,
-      purchaseFrequency: '',
       notes: '',
       barcode: '',
+      packageLabel: '',
+      packageSize: 1,
     },
   });
 
@@ -77,12 +119,13 @@ export default function ProductsPage() {
     reset({
       name: '',
       brand: '',
-      category: Category.OTROS,
-      defaultUnit: UnitType.UNIDAD,
+      categoryId: 9,
+      defaultUnitTypeId: 5,
       defaultQuantity: 1,
-      purchaseFrequency: '',
       notes: '',
       barcode: '',
+      packageLabel: '',
+      packageSize: 1,
     });
     setEditingProduct(null);
     setDialogOpen(true);
@@ -92,12 +135,13 @@ export default function ProductsPage() {
     reset({
       name: product.name,
       brand: product.brand ?? '',
-      category: product.category,
-      defaultUnit: product.defaultUnit,
+      categoryId: product.categoryId,
+      defaultUnitTypeId: product.defaultUnitTypeId,
       defaultQuantity: product.defaultQuantity,
-      purchaseFrequency: product.purchaseFrequency ?? '',
       notes: product.notes ?? '',
       barcode: product.barcode ?? '',
+      packageLabel: product.packageLabel ?? '',
+      packageSize: product.packageSize ?? 1,
     });
     setEditingProduct(product);
     setDialogOpen(true);
@@ -109,21 +153,25 @@ export default function ProductsPage() {
   };
 
   const onSubmit = (data: ProductFormData) => {
-    const dto: CreateProductDto = {
-      ...data,
+    const baseDto = {
+      name: data.name,
       brand: data.brand || undefined,
-      purchaseFrequency: data.purchaseFrequency || undefined,
+      categoryId: data.categoryId,
+      defaultUnitTypeId: data.defaultUnitTypeId,
+      defaultQuantity: data.defaultQuantity,
       notes: data.notes || undefined,
       barcode: data.barcode || undefined,
+      packageLabel: data.packageLabel || undefined,
+      packageSize: data.packageSize || 1,
     };
 
     if (editingProduct) {
       updateProduct.mutate(
-        { id: editingProduct.id, data: dto },
+        { id: editingProduct.id, data: { id: editingProduct.id, ...baseDto } },
         { onSuccess: handleClose },
       );
     } else {
-      createProduct.mutate(dto, { onSuccess: handleClose });
+      createProduct.mutate(baseDto, { onSuccess: handleClose });
     }
   };
 
@@ -156,14 +204,14 @@ export default function ProductsPage() {
       key: 'category',
       header: 'Categoria',
       align: 'center',
-      render: (row) => CategoryLabels[row.category] ?? row.category,
+      render: (row) => row.categoryName ?? CATEGORIES.find(c => c.id === row.categoryId)?.name ?? '-',
     },
     {
       key: 'defaultUnit',
       header: 'Unidad',
       align: 'center',
       hideOnMobile: true,
-      render: (row) => UnitTypeLabels[row.defaultUnit] ?? row.defaultUnit,
+      render: (row) => row.unitAbbreviation ?? UNIT_TYPES.find(u => u.id === row.defaultUnitTypeId)?.name ?? '-',
     },
     {
       key: 'defaultQuantity',
@@ -177,7 +225,7 @@ export default function ProductsPage() {
       align: 'left',
       hideOnMobile: true,
       render: (row) => {
-        const notes = (row as Product & { notes?: string }).notes;
+        const notes = row.notes;
         if (!notes) return '-';
         return (
           <Tooltip title={notes} arrow>
@@ -189,8 +237,8 @@ export default function ProductsPage() {
   ];
 
   const mobileCardRender = (product: Product) => {
-    const unitAbbr = UnitTypeAbbreviations[product.defaultUnit] ?? product.defaultUnit;
-    const categoryLabel = CategoryLabels[product.category] ?? product.category;
+    const unitAbbr = product.unitAbbreviation ?? UNIT_TYPES.find(u => u.id === product.defaultUnitTypeId)?.name ?? '';
+    const categoryLabel = product.categoryName ?? CATEGORIES.find(c => c.id === product.categoryId)?.name ?? '';
     const isHighlighted = highlightedProductId === product.id;
     return (
       <div
@@ -331,45 +379,100 @@ export default function ProductsPage() {
                 name="brand"
                 control={control}
                 render={({ field }) => (
-                  <TextField {...field} label="Marca" fullWidth />
+                  <Autocomplete
+                    freeSolo
+                    value={field.value || ''}
+                    onChange={(_e, newValue) => {
+                      field.onChange(newValue ?? '');
+                    }}
+                    onInputChange={(_e, newValue) => {
+                      field.onChange(newValue);
+                    }}
+                    options={existingBrands}
+                    filterOptions={(options, params) => {
+                      const filtered = brandFilter(options, params);
+                      const { inputValue } = params;
+                      const isExisting = options.some(
+                        (opt) => opt.localeCompare(inputValue, undefined, { sensitivity: 'base' }) === 0
+                      );
+                      if (inputValue !== '' && !isExisting) {
+                        filtered.push(inputValue);
+                      }
+                      return filtered;
+                    }}
+                    renderOption={(props, option) => {
+                      const isNew = !existingBrands.some(
+                        (b) => b.localeCompare(option, undefined, { sensitivity: 'base' }) === 0
+                      );
+                      return (
+                        <li {...props} key={option}>
+                          {isNew ? (
+                            <span className="text-blue-600 font-medium">+ Agregar "{option}"</span>
+                          ) : (
+                            option
+                          )}
+                        </li>
+                      );
+                    }}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        label="Marca"
+                        placeholder="Busca o escribe una nueva"
+                        fullWidth
+                      />
+                    )}
+                  />
                 )}
               />
-              <Controller
-                name="category"
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    select
-                    label="Categoria"
-                    error={!!errors.category}
-                    helperText={errors.category?.message}
-                    fullWidth
+              <Box display="flex" gap={1} alignItems="flex-start">
+                <Controller
+                  name="categoryId"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      select
+                      label="Categoria"
+                      error={!!errors.categoryId}
+                      helperText={errors.categoryId?.message}
+                      fullWidth
+                    >
+                      {CATEGORIES.map((cat) => (
+                        <MenuItem key={cat.id} value={cat.id}>
+                          {cat.name}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  )}
+                />
+                <Tooltip title="Agregar nueva categoria" arrow>
+                  <Button
+                    type="button"
+                    variant="outlined"
+                    onClick={() => setNewCategoryDialogOpen(true)}
+                    sx={{ minWidth: 44, height: 56, px: 0 }}
                   >
-                    {Object.entries(CategoryLabels).map(([value, label]) => (
-                      <MenuItem key={value} value={value}>
-                        {label}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                )}
-              />
+                    +
+                  </Button>
+                </Tooltip>
+              </Box>
               <Box display="flex" gap={2} sx={{ flexDirection: { xs: 'column', sm: 'row' } }}>
                 <Controller
-                  name="defaultUnit"
+                  name="defaultUnitTypeId"
                   control={control}
                   render={({ field }) => (
                     <TextField
                       {...field}
                       select
                       label="Unidad"
-                      error={!!errors.defaultUnit}
-                      helperText={errors.defaultUnit?.message}
+                      error={!!errors.defaultUnitTypeId}
+                      helperText={errors.defaultUnitTypeId?.message}
                       fullWidth
                     >
-                      {Object.entries(UnitTypeLabels).map(([value, label]) => (
-                        <MenuItem key={value} value={value}>
-                          {label}
+                      {UNIT_TYPES.map((ut) => (
+                        <MenuItem key={ut.id} value={ut.id}>
+                          {ut.name}
                         </MenuItem>
                       ))}
                     </TextField>
@@ -386,6 +489,34 @@ export default function ProductsPage() {
                       error={!!errors.defaultQuantity}
                       helperText={errors.defaultQuantity?.message}
                       fullWidth
+                    />
+                  )}
+                />
+              </Box>
+              <Box display="flex" gap={2} sx={{ flexDirection: { xs: 'column', sm: 'row' } }}>
+                <Controller
+                  name="packageLabel"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      label="Presentacion"
+                      placeholder="Ej: bote de 1L, bolsa de 1kg"
+                      fullWidth
+                    />
+                  )}
+                />
+                <Controller
+                  name="packageSize"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      type="number"
+                      label="Tamaño empaque"
+                      placeholder="1"
+                      fullWidth
+                      inputProps={{ step: 0.25, min: 0.25 }}
                     />
                   )}
                 />
@@ -437,6 +568,51 @@ export default function ProductsPage() {
         }}
         loading={deleteProduct.isPending}
       />
+      {/* Mini dialog for new category */}
+      <Dialog
+        open={newCategoryDialogOpen}
+        onClose={() => { setNewCategoryDialogOpen(false); setNewCategoryName(''); }}
+        maxWidth="xs"
+        fullWidth
+      >
+        <DialogTitle>Nueva categoria</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            label="Nombre de la categoria"
+            value={newCategoryName}
+            onChange={(e) => setNewCategoryName(e.target.value)}
+            fullWidth
+            sx={{ mt: 1 }}
+            placeholder="Ej: Congelados, Mascotas"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => { setNewCategoryDialogOpen(false); setNewCategoryName(''); }}>
+            Cancelar
+          </Button>
+          <Button
+            variant="contained"
+            disabled={!newCategoryName.trim() || creatingCategory}
+            onClick={async () => {
+              setCreatingCategory(true);
+              try {
+                const res = await apiClient.post('/categories', { name: newCategoryName.trim() });
+                const newCat = res.data;
+                await queryClient.invalidateQueries({ queryKey: ['categories'] });
+                setValue('categoryId', newCat.id);
+                setNewCategoryDialogOpen(false);
+                setNewCategoryName('');
+              } catch {
+                // handle error
+              }
+              setCreatingCategory(false);
+            }}
+          >
+            {creatingCategory ? 'Creando...' : 'Agregar'}
+          </Button>
+        </DialogActions>
+      </Dialog>
       </div>
     </div>
   );
