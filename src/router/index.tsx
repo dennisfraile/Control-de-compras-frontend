@@ -25,6 +25,7 @@ const QuickPurchasePage = lazy(() => import('../pages/QuickPurchasePage'));
 const BudgetPage = lazy(() => import('../pages/BudgetPage'));
 const StatisticsPage = lazy(() => import('../pages/StatisticsPage'));
 const AyudaPage = lazy(() => import('../pages/AyudaPage'));
+const PurchaseCalendarPage = lazy(() => import('../pages/PurchaseCalendarPage'));
 const NotFoundPage = lazy(() => import('../pages/NotFoundPage'));
 
 const LazyFallback = (
@@ -213,6 +214,14 @@ const router = createBrowserRouter([
             element: (
               <SuspenseWrapper>
                 <StatisticsPage />
+              </SuspenseWrapper>
+            ),
+          },
+          {
+            path: '/calendar',
+            element: (
+              <SuspenseWrapper>
+                <PurchaseCalendarPage />
               </SuspenseWrapper>
             ),
           },

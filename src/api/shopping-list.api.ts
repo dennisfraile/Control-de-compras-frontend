@@ -30,4 +30,9 @@ export const shoppingListApi = {
   removeItem: async (id: string): Promise<void> => {
     await apiClient.delete(`/shopping-list/${id}`);
   },
+
+  getShareText: async (): Promise<string> => {
+    const response = await apiClient.get<string>('/shopping-list/share-text');
+    return response.data;
+  },
 };

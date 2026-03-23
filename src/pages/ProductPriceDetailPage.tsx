@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { ArrowLeft, TrendingUp, TrendingDown, Minus, DollarSign, Store, Calendar } from 'lucide-react';
+import { ArrowLeft, TrendingUp, TrendingDown, Minus, DollarSign, Store, Calendar, Scale } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { getPriceDetail } from '../api/products.api';
 import { formatCurrency, formatDate } from '../utils/format';
@@ -17,6 +17,8 @@ interface PriceDetailResponse {
   mostExpensiveStore: string;
   trend: 'up' | 'down' | 'stable';
   priceHistory: Array<{ date: string; storeName: string; unitPrice: number; quantity: number }>;
+  pricePerBaseUnit?: number | null;
+  baseUnitLabel?: string | null;
 }
 
 const STORE_COLORS = ['#3b82f6', '#22c55e', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6', '#f97316'];
@@ -136,6 +138,26 @@ export default function ProductPriceDetailPage() {
             </div>
           </div>
         </div>
+
+        {/* Comparable unit price */}
+        {data.pricePerBaseUnit != null && data.baseUnitLabel && (
+          <div className="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-xl shadow-md p-6 mb-8 text-white">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center">
+                <Scale size={22} />
+              </div>
+              <div>
+                <p className="text-sm text-indigo-100">Precio comparable</p>
+                <p className="text-3xl font-bold tracking-tight">
+                  {formatCurrency(data.pricePerBaseUnit)} <span className="text-base font-normal text-indigo-200">{data.baseUnitLabel}</span>
+                </p>
+              </div>
+            </div>
+            <p className="text-xs text-indigo-200 mt-2">
+              Precio normalizado para comparar con otros productos de la misma categoria
+            </p>
+          </div>
+        )}
 
         {/* Line chart */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-8">

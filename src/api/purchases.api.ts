@@ -75,6 +75,20 @@ export const purchasesApi = {
   },
 };
 
+export interface PurchaseCalendarDay {
+  date: string;
+  purchaseCount: number;
+  totalSpent: number;
+  storeNames: string[];
+}
+
+export const getCalendar = async (year: number, month: number): Promise<PurchaseCalendarDay[]> => {
+  const { data } = await apiClient.get<PurchaseCalendarDay[]>('/purchases/calendar', {
+    params: { year, month },
+  });
+  return data;
+};
+
 export const scanReceipt = (file: File) => {
   const formData = new FormData();
   formData.append('file', file);

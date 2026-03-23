@@ -27,6 +27,7 @@ import {
   BarChart3,
   PieChart,
   Wallet,
+  Calendar,
 } from 'lucide-react';
 import { useAuthStore } from '../../stores/auth.store';
 import { useLogout } from '../../hooks/useAuth';
@@ -132,6 +133,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         { label: 'Ahorro', path: '/savings', icon: TrendingDown },
         { label: 'Comparacion', path: '/prices', icon: TrendingUp },
         { label: 'Comunidad', path: '/prices/community', icon: Users },
+        { label: 'Calendario', path: '/calendar', icon: Calendar },
         { label: 'Reportes', path: '/reports', icon: BarChart3 },
         { label: 'Estadisticas', path: '/statistics', icon: PieChart },
       ],
