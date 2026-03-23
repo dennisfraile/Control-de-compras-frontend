@@ -44,6 +44,14 @@ export const inventoryApi = {
     return response.data;
   },
 
+  quickConsume: async (productId: string, quantity = 1): Promise<InventoryEntry> => {
+    const { data } = await apiClient.patch<InventoryEntry>(
+      `/inventory/${productId}/quick-consume`,
+      { quantity },
+    );
+    return data;
+  },
+
   export: async (): Promise<Blob> => {
     const { data } = await apiClient.get('/inventory/export', {
       responseType: 'blob',

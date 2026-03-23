@@ -58,6 +58,11 @@ export const purchasesApi = {
     return response.data;
   },
 
+  quickPurchase: async (data: { storeId: string; items: Array<{ productId: string; quantity: number; unitTypeId: number; unitPrice: number }> }) => {
+    const { data: result } = await apiClient.post('/purchases/quick', data);
+    return result;
+  },
+
   export: async (from?: string, to?: string): Promise<Blob> => {
     const params = new URLSearchParams();
     if (from) params.append('from', from);

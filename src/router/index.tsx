@@ -19,6 +19,9 @@ const RecipesPage = lazy(() => import('../pages/RecipesPage'));
 const RestockAlertsPage = lazy(() => import('../pages/RestockAlertsPage'));
 const ScanReceiptPage = lazy(() => import('../pages/ScanReceiptPage'));
 const TemplatesPage = lazy(() => import('../pages/TemplatesPage'));
+const ProductPriceDetailPage = lazy(() => import('../pages/ProductPriceDetailPage'));
+const ReportSummaryPage = lazy(() => import('../pages/ReportSummaryPage'));
+const QuickPurchasePage = lazy(() => import('../pages/QuickPurchasePage'));
 const AyudaPage = lazy(() => import('../pages/AyudaPage'));
 const NotFoundPage = lazy(() => import('../pages/NotFoundPage'));
 
@@ -160,6 +163,30 @@ const router = createBrowserRouter([
             element: (
               <SuspenseWrapper>
                 <ScanReceiptPage />
+              </SuspenseWrapper>
+            ),
+          },
+          {
+            path: '/products/:id/prices',
+            element: (
+              <SuspenseWrapper>
+                <ProductPriceDetailPage />
+              </SuspenseWrapper>
+            ),
+          },
+          {
+            path: '/reports',
+            element: (
+              <SuspenseWrapper>
+                <ReportSummaryPage />
+              </SuspenseWrapper>
+            ),
+          },
+          {
+            path: '/quick-purchase',
+            element: (
+              <SuspenseWrapper>
+                <QuickPurchasePage />
               </SuspenseWrapper>
             ),
           },

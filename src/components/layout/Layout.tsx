@@ -23,6 +23,8 @@ import {
   ChevronDown,
   ChevronUp,
   HelpCircle,
+  Zap,
+  BarChart3,
 } from 'lucide-react';
 import { useAuthStore } from '../../stores/auth.store';
 import { useLogout } from '../../hooks/useAuth';
@@ -105,6 +107,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       items: [
         { label: 'Lista de compras', path: '/shopping-list', icon: ClipboardList },
         { label: 'Compras', path: '/purchases', icon: ShoppingCart },
+        { label: 'Compra rapida', path: '/quick-purchase', icon: Zap },
         { label: 'Escanear ticket', path: '/scan-receipt', icon: Camera },
         { label: 'Plantillas', path: '/templates', icon: FileText },
       ],
@@ -127,6 +130,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         { label: 'Ahorro', path: '/savings', icon: TrendingDown },
         { label: 'Comparacion', path: '/prices', icon: TrendingUp },
         { label: 'Comunidad', path: '/prices/community', icon: Users },
+        { label: 'Reportes', path: '/reports', icon: BarChart3 },
       ],
     },
     {
