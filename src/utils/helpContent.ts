@@ -36,7 +36,7 @@ export const sectionHelp: Record<string, SectionHelp> = {
     title: 'Inventario',
     description: 'Control del stock actual de productos en tu hogar.',
     tips: [
-      'Establece un umbral minimo para cada producto y recibe alertas cuando este bajo.',
+      'Configura el minimo deseado para cada producto y recibe alertas cuando este por acabarse.',
       'Actualiza las cantidades conforme consumas productos para mantener datos precisos.',
       'Los productos con fecha de vencimiento proxima se resaltan automaticamente.',
     ],
@@ -191,9 +191,9 @@ export interface GlossaryTerm {
 
 export const glossaryTerms: GlossaryTerm[] = [
   { term: 'Stock', definition: 'Cantidad disponible de un producto en tu hogar. Se reduce conforme consumes y se incrementa al registrar compras.' },
-  { term: 'Umbral minimo', definition: 'Cantidad minima que deseas tener de un producto. Cuando el stock baja de este nivel, recibes una alerta.' },
+  { term: 'Minimo deseado', definition: 'Cantidad minima que quieres tener siempre en casa de un producto. Cuando tu stock baja de este numero, el sistema te sugiere comprarlo.' },
   { term: 'Consumo promedio', definition: 'Cantidad promedio que consumes de un producto en un periodo. Se calcula automaticamente con tu historial de compras.' },
-  { term: 'Lista inteligente', definition: 'Lista de compras generada automaticamente analizando tu stock actual, umbral minimo y patron de consumo.' },
+  { term: 'Lista inteligente', definition: 'Lista de compras generada automaticamente analizando tu stock actual, minimo deseado y patron de consumo.' },
   { term: 'Precio unitario', definition: 'Precio de una sola unidad de producto (1 litro, 1 kilo, 1 pieza). Permite comparar precios entre presentaciones diferentes.' },
   { term: 'Plantilla de compra', definition: 'Lista predefinida de productos y cantidades que puedes reutilizar para generar listas de compras rapidamente.' },
   { term: 'Categoria', definition: 'Agrupacion de productos por tipo: Lacteos, Carnes, Frutas, Granos, Limpieza, etc. Ayuda a organizar tus productos.' },
@@ -226,7 +226,7 @@ export const workflows: Workflow[] = [
     steps: [
       { title: 'Agrega tus tiendas', description: 'Registra los supermercados donde compras habitualmente.', link: '/stores' },
       { title: 'Crea tus productos', description: 'Agrega los productos que compras regularmente con su categoria y unidad.', link: '/products' },
-      { title: 'Registra tu inventario', description: 'Indica que tienes actualmente en casa y establece umbrales minimos.', link: '/inventory' },
+      { title: 'Registra tu inventario', description: 'Indica que tienes actualmente en casa y configura el minimo deseado de cada producto.', link: '/inventory' },
       { title: 'Registra tu primera compra', description: 'Captura una compra real con precios para empezar a generar estadisticas.', link: '/purchases' },
       { title: 'Revisa tu dashboard', description: 'Ve el resumen de tus compras, stock bajo y gastos del mes.', link: '/' },
     ],

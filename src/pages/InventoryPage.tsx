@@ -25,7 +25,7 @@ import { formatDate } from '../utils/format';
 const inventorySchema = z.object({
   productId: z.string().min(1, 'Selecciona un producto'),
   currentStock: z.coerce.number().min(0, 'Stock no puede ser negativo'),
-  minimumStock: z.coerce.number().min(0, 'Stock minimo no puede ser negativo'),
+  minimumStock: z.coerce.number().min(0, 'El minimo no puede ser negativo'),
   expirationDate: z.string().optional(),
 });
 
@@ -169,7 +169,7 @@ export default function InventoryPage() {
     },
     {
       key: 'minimumThreshold',
-      header: 'Stock minimo',
+      header: 'Minimo',
       align: 'center',
       hideOnMobile: true,
       render: (row) => row.minimumThreshold,
@@ -341,7 +341,7 @@ export default function InventoryPage() {
                     <TextField
                       {...field}
                       type="number"
-                      label="Stock minimo"
+                      label="Avisar cuando tenga menos de"
                       error={!!errors.minimumStock}
                       helperText={errors.minimumStock?.message}
                       fullWidth
