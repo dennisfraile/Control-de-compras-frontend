@@ -25,6 +25,8 @@ import {
   HelpCircle,
   Zap,
   BarChart3,
+  PieChart,
+  Wallet,
 } from 'lucide-react';
 import { useAuthStore } from '../../stores/auth.store';
 import { useLogout } from '../../hooks/useAuth';
@@ -131,6 +133,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         { label: 'Comparacion', path: '/prices', icon: TrendingUp },
         { label: 'Comunidad', path: '/prices/community', icon: Users },
         { label: 'Reportes', path: '/reports', icon: BarChart3 },
+        { label: 'Estadisticas', path: '/statistics', icon: PieChart },
       ],
     },
     {
@@ -138,6 +141,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       icon: Store,
       items: [
         { label: 'Tiendas', path: '/stores', icon: Store },
+        { label: 'Presupuesto', path: '/budget', icon: Wallet },
       ],
     },
   ];

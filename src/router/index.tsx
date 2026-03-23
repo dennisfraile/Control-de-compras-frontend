@@ -22,6 +22,8 @@ const TemplatesPage = lazy(() => import('../pages/TemplatesPage'));
 const ProductPriceDetailPage = lazy(() => import('../pages/ProductPriceDetailPage'));
 const ReportSummaryPage = lazy(() => import('../pages/ReportSummaryPage'));
 const QuickPurchasePage = lazy(() => import('../pages/QuickPurchasePage'));
+const BudgetPage = lazy(() => import('../pages/BudgetPage'));
+const StatisticsPage = lazy(() => import('../pages/StatisticsPage'));
 const AyudaPage = lazy(() => import('../pages/AyudaPage'));
 const NotFoundPage = lazy(() => import('../pages/NotFoundPage'));
 
@@ -195,6 +197,22 @@ const router = createBrowserRouter([
             element: (
               <SuspenseWrapper>
                 <TemplatesPage />
+              </SuspenseWrapper>
+            ),
+          },
+          {
+            path: '/budget',
+            element: (
+              <SuspenseWrapper>
+                <BudgetPage />
+              </SuspenseWrapper>
+            ),
+          },
+          {
+            path: '/statistics',
+            element: (
+              <SuspenseWrapper>
+                <StatisticsPage />
               </SuspenseWrapper>
             ),
           },
