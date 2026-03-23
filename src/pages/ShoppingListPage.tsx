@@ -31,7 +31,8 @@ import { useProducts } from '../hooks/useProducts';
 import { useInventory } from '../hooks/useInventory';
 import { shoppingListApi } from '../api/shopping-list.api';
 import { ShoppingListSuggestion } from '../types/shopping-list.types';
-import { formatCurrency } from '../utils/format';
+import { formatCurrency, formatStock, formatUnit } from '../utils/format';
+import StockLevelIndicator from '../components/common/StockLevelIndicator';
 
 // ---------------------------------------------------------------------------
 // Constants & helpers
@@ -233,19 +234,17 @@ function ItemCard({
           {/* Progress bar */}
           {!item.checked && (
             <div className="mt-3">
-              <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mb-1">
-                <span>
-                  Stock: {item.currentStock} {item.unitAbbreviation}
-                </span>
-                <span>
-                  Necesitas: {item.localQty} {item.unitAbbreviation}
-                </span>
-              </div>
-              <div className="w-full h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
-                <div
-                  className={`h-full rounded-full transition-all duration-500 ${meta.progressBar}`}
-                  style={{ width: `${stockPercent}%` }}
-                />
+              <div className="flex items-start gap-4">
+                <div className="flex-1">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Tienes:</p>
+                  <StockLevelIndicator quantity={item.currentStock} unitAbbreviation={formatUnit(item.currentStock, item.unitAbbreviation)} compact />
+                </div>
+                <div className="text-right">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Comprar:</p>
+                  <p className="text-sm font-bold text-gray-800 dark:text-white">
+                    {formatStock(item.localQty, item.unitAbbreviation)}
+                  </p>
+                </div>
               </div>
             </div>
           )}

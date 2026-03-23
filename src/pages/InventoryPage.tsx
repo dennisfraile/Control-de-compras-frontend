@@ -4,7 +4,10 @@ import { FileDownload as FileDownloadIcon } from '@mui/icons-material';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Pencil, Trash2 } from 'lucide-react';
+import { Pencil, Trash2, Minus, Plus } from 'lucide-react';
+import { useQueryClient } from '@tanstack/react-query';
+import { toast } from 'react-toastify';
+import StockLevelIndicator from '../components/common/StockLevelIndicator';
 import PageHeader from '../components/common/PageHeader';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import ConfirmDialog from '../components/common/ConfirmDialog';
@@ -20,7 +23,7 @@ import {
 import { useProducts } from '../hooks/useProducts';
 import { inventoryApi } from '../api/inventory.api';
 import { InventoryEntry } from '../types/inventory.types';
-import { formatDate } from '../utils/format';
+import { formatDate, formatStock, formatUnit } from '../utils/format';
 
 const inventorySchema = z.object({
   productId: z.string().min(1, 'Selecciona un producto'),
@@ -96,6 +99,10 @@ export default function InventoryPage() {
   };
 
   const onSubmit = (data: InventoryFormData) => {
+    const expirationUtc = data.expirationDate
+      ? new Date(data.expirationDate + 'T00:00:00Z').toISOString()
+      : undefined;
+
     if (editingEntry) {
       updateEntry.mutate(
         {
@@ -105,7 +112,7 @@ export default function InventoryPage() {
             currentQuantity: data.currentStock,
             unitTypeId: editingEntry.unitTypeId ?? 5,
             minimumThreshold: data.minimumStock,
-            expirationDateUtc: data.expirationDate || undefined,
+            expirationDateUtc: expirationUtc,
           },
         },
         { onSuccess: handleClose },
@@ -117,7 +124,7 @@ export default function InventoryPage() {
           currentQuantity: data.currentStock,
           unitTypeId: 5,
           minimumThreshold: data.minimumStock,
-          expirationDateUtc: data.expirationDate || undefined,
+          expirationDateUtc: expirationUtc,
         },
         { onSuccess: handleClose },
       );
@@ -151,6 +158,85 @@ export default function InventoryPage() {
     );
   };
 
+  const queryClient = useQueryClient();
+
+  const handleQuickAdjust = async (entry: InventoryEntry, delta: number) => {
+    const newQty = Math.max(0, entry.currentQuantity + delta);
+    try {
+      if (delta < 0) {
+        await inventoryApi.quickConsume(entry.productId, Math.abs(delta));
+      } else {
+        await inventoryApi.update(entry.id, {
+          ...entry,
+          currentQuantity: newQty,
+        });
+      }
+      queryClient.invalidateQueries({ queryKey: ['inventory'] });
+      const label = delta > 0 ? `+${delta}` : `${delta}`;
+      toast.success(`${entry.productName}: ${label}`);
+    } catch {
+      toast.error('Error al actualizar');
+    }
+  };
+
+  const FractionButtons = ({ entry }: { entry: InventoryEntry }) => (
+    <div className="flex items-center gap-1">
+      <button
+        onClick={() => handleQuickAdjust(entry, -0.25)}
+        className="w-8 h-8 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-xs font-bold hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors flex items-center justify-center"
+        title="Quitar 1/4"
+      >
+        -¼
+      </button>
+      <button
+        onClick={() => handleQuickAdjust(entry, -0.5)}
+        className="w-8 h-8 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-xs font-bold hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors flex items-center justify-center"
+        title="Quitar 1/2"
+      >
+        -½
+      </button>
+      <button
+        onClick={() => handleQuickAdjust(entry, 0.5)}
+        className="w-8 h-8 rounded-lg bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 text-xs font-bold hover:bg-green-100 dark:hover:bg-green-900/40 transition-colors flex items-center justify-center"
+        title="Agregar 1/2"
+      >
+        +½
+      </button>
+      <button
+        onClick={() => handleQuickAdjust(entry, 0.25)}
+        className="w-8 h-8 rounded-lg bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 text-xs font-bold hover:bg-green-100 dark:hover:bg-green-900/40 transition-colors flex items-center justify-center"
+        title="Agregar 1/4"
+      >
+        +¼
+      </button>
+      <button
+        onClick={() => handleQuickAdjust(entry, -1)}
+        className="w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex items-center justify-center"
+        title="Quitar 1 empaque"
+      >
+        <Minus size={14} />
+      </button>
+      <button
+        onClick={() => handleQuickAdjust(entry, 1)}
+        className="w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex items-center justify-center"
+        title="Agregar 1 empaque"
+      >
+        <Plus size={14} />
+      </button>
+    </div>
+  );
+
+  const LevelBar = ({ current, minimum }: { current: number; minimum: number }) => {
+    const fraction = current % 1;
+    const percent = minimum > 0 ? Math.min((current / minimum) * 100, 100) : (current > 0 ? 100 : 0);
+    const color = percent <= 25 ? 'bg-red-500' : percent <= 50 ? 'bg-yellow-500' : 'bg-green-500';
+    return (
+      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-1">
+        <div className={`h-2 rounded-full ${color} transition-all`} style={{ width: `${percent}%` }} />
+      </div>
+    );
+  };
+
   const columns: Column<InventoryEntry>[] = [
     {
       key: 'productName',
@@ -165,7 +251,12 @@ export default function InventoryPage() {
       key: 'currentQuantity',
       header: 'Stock actual',
       align: 'center',
-      render: (row) => `${row.currentQuantity} ${row.unitAbbreviation ?? ''}`,
+      render: (row) => (
+        <div className="flex flex-col items-center gap-2 py-1">
+          <StockLevelIndicator quantity={row.currentQuantity} unitAbbreviation={formatUnit(row.currentQuantity, row.unitAbbreviation ?? '')} />
+          <FractionButtons entry={row} />
+        </div>
+      ),
     },
     {
       key: 'minimumThreshold',
@@ -184,8 +275,7 @@ export default function InventoryPage() {
       key: 'expirationDateUtc',
       header: 'Vencimiento',
       align: 'center',
-      hideOnMobile: true,
-      render: (row) => row.expirationDateUtc ? formatDate(row.expirationDateUtc) : 'N/A',
+      render: (row) => row.expirationDateUtc ? formatDate(row.expirationDateUtc) : 'Sin vencimiento',
     },
   ];
 
@@ -198,9 +288,7 @@ export default function InventoryPage() {
             <div className="font-semibold text-gray-900 dark:text-gray-100 truncate">
               {entry.productName ?? 'N/A'}
             </div>
-            <div className="text-sm text-gray-500 dark:text-gray-400 mt-1 flex items-center gap-2">
-              <span>{entry.currentQuantity} {entry.unitAbbreviation ?? ''}</span>
-              <span>·</span>
+            <div className="flex items-center gap-2 mt-1">
               {isLow ? (
                 <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300">
                   Stock bajo
@@ -211,9 +299,13 @@ export default function InventoryPage() {
                 </span>
               )}
             </div>
+            <div className="mt-2">
+              <StockLevelIndicator quantity={entry.currentQuantity} unitAbbreviation={formatUnit(entry.currentQuantity, entry.unitAbbreviation ?? '')} compact />
+            </div>
           </div>
           <div className="flex items-center gap-1 ml-2 shrink-0">
             <button
+              type="button"
               onClick={() => handleOpenEdit(entry)}
               className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
               title="Editar"
@@ -221,6 +313,7 @@ export default function InventoryPage() {
               <Pencil size={18} className="text-blue-600" />
             </button>
             <button
+              type="button"
               onClick={() => {
                 setEntryToDelete(entry.id);
                 setDeleteDialogOpen(true);
@@ -231,6 +324,9 @@ export default function InventoryPage() {
               <Trash2 size={18} className="text-red-600" />
             </button>
           </div>
+        </div>
+        <div className="mt-3">
+          <FractionButtons entry={entry} />
         </div>
       </div>
     );

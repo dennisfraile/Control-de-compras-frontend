@@ -26,6 +26,19 @@ export function formatQuantity(quantity: number, unit: UnitType): string {
   return `${quantity} ${abbreviation}`;
 }
 
+export function formatUnit(quantity: number, abbreviation: string): string {
+  // Pluralize "unidad" -> "unidades", "pieza" -> "piezas"
+  if (quantity !== 1) {
+    if (abbreviation === 'unidad') return 'unidades';
+    if (abbreviation === 'pieza') return 'piezas';
+  }
+  return abbreviation;
+}
+
+export function formatStock(quantity: number, abbreviation: string): string {
+  return `${quantity} ${formatUnit(quantity, abbreviation)}`;
+}
+
 export function formatRelativeDate(date: string | Date): string {
   const diff = dayjs(date).diff(dayjs(), 'day');
   if (diff === 0) return 'Hoy';

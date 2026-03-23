@@ -19,7 +19,7 @@ export const inventoryApi = {
   create: async (data: CreateInventoryEntryDto): Promise<InventoryEntry> => {
     const response = await apiClient.put<InventoryEntry>(
       `/inventory/${data.productId}`,
-      { productId: data.productId, newQuantity: data.currentQuantity, unitTypeId: data.unitTypeId, minimumThreshold: data.minimumThreshold },
+      { productId: data.productId, newQuantity: data.currentQuantity, unitTypeId: data.unitTypeId, minimumThreshold: data.minimumThreshold, expirationDateUtc: data.expirationDateUtc },
     );
     return response.data;
   },
@@ -30,7 +30,7 @@ export const inventoryApi = {
   ): Promise<InventoryEntry> => {
     const response = await apiClient.put<InventoryEntry>(
       `/inventory/${data.productId}`,
-      { productId: data.productId, newQuantity: data.currentQuantity, unitTypeId: data.unitTypeId, minimumThreshold: data.minimumThreshold },
+      { productId: data.productId, newQuantity: data.currentQuantity, unitTypeId: data.unitTypeId, minimumThreshold: data.minimumThreshold, expirationDateUtc: data.expirationDateUtc },
     );
     return response.data;
   },
