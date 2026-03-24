@@ -17,6 +17,7 @@ export interface Purchase {
   purchaseDateUtc: string;
   totalAmount: number;
   notes?: string;
+  tags?: string;
   createdAtUtc: string;
   items: PurchaseItem[];
 }
@@ -33,6 +34,7 @@ export interface CreatePurchaseDto {
   storeId: string;
   purchaseDateUtc: string;
   notes?: string;
+  tags?: string;
   items: CreatePurchaseItemDto[];
 }
 

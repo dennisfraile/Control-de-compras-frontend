@@ -1,4 +1,5 @@
 import { Pencil, Trash2 } from 'lucide-react';
+import { useUIStore } from '../../stores/ui.store';
 
 export interface Column<T> {
   key: string;
@@ -35,6 +36,7 @@ export default function ResponsiveTable<T>({
   emptyMessage = 'No hay datos para mostrar',
   mobileCardRender,
 }: ResponsiveTableProps<T>) {
+  const compactMode = useUIStore((s) => s.compactMode);
   const hasActions = !!(onEdit || onDelete || actions);
 
   if (data.length === 0) {
@@ -81,7 +83,7 @@ export default function ResponsiveTable<T>({
               {columns.map((col) => (
                 <th
                   key={col.key}
-                  className={`px-6 py-3 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 ${alignClass(col.align)}`}
+                  className={`${compactMode ? 'px-4 py-2' : 'px-6 py-3'} text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 ${alignClass(col.align)}`}
                 >
                   {col.header}
                 </th>
@@ -102,7 +104,7 @@ export default function ResponsiveTable<T>({
                 {columns.map((col) => (
                   <td
                     key={col.key}
-                    className={`px-6 py-4 text-sm text-gray-700 dark:text-gray-300 ${alignClass(col.align)}`}
+                    className={`${compactMode ? 'px-4 py-2 text-xs' : 'px-6 py-4 text-sm'} text-gray-700 dark:text-gray-300 ${alignClass(col.align)}`}
                   >
                     {col.render(row)}
                   </td>

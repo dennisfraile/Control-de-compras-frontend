@@ -3,15 +3,25 @@ import { esES } from '@mui/material/locale';
 import { esES as dataGridEsES } from '@mui/x-data-grid/locales';
 import { esES as datePickerEsES } from '@mui/x-date-pickers/locales';
 
-export const getTheme = (mode: PaletteMode) =>
-  createTheme(
+// #20 - Seasonal accent colors
+function getSeasonalAccent(): { primary: string; light: string; dark: string } {
+  const month = new Date().getMonth();
+  if (month >= 2 && month <= 4) return { primary: '#22c55e', light: '#4ade80', dark: '#16a34a' }; // Spring
+  if (month >= 5 && month <= 7) return { primary: '#f97316', light: '#fb923c', dark: '#ea580c' }; // Summer
+  if (month >= 8 && month <= 10) return { primary: '#f59e0b', light: '#fbbf24', dark: '#d97706' }; // Autumn
+  return { primary: '#3b82f6', light: '#60a5fa', dark: '#2563eb' }; // Winter
+}
+
+export const getTheme = (mode: PaletteMode, seasonal = false) => {
+  const accent = seasonal ? getSeasonalAccent() : { primary: '#3b82f6', light: '#60a5fa', dark: '#2563eb' };
+  return createTheme(
     {
       palette: {
         mode,
         primary: {
-          main: '#3b82f6',
-          light: '#60a5fa',
-          dark: '#2563eb',
+          main: accent.primary,
+          light: accent.light,
+          dark: accent.dark,
         },
         secondary: {
           main: '#8b5cf6',
@@ -158,5 +168,6 @@ export const getTheme = (mode: PaletteMode) =>
     dataGridEsES,
     datePickerEsES,
   );
+};
 
 export default getTheme('light');

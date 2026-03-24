@@ -28,11 +28,16 @@ import {
   PieChart,
   Wallet,
   Calendar,
+  Search,
 } from 'lucide-react';
 import { useAuthStore } from '../../stores/auth.store';
 import { useLogout } from '../../hooks/useAuth';
 import { useThemeContext } from '../../context/ThemeContext';
 import { useLowStock } from '../../hooks/useInventory';
+import GlobalSearch from '../common/GlobalSearch';
+import NotificationBell from '../common/NotificationBell';
+import OnboardingTooltip from '../common/OnboardingTooltip';
+import { useUIStore } from '../../stores/ui.store';
 
 interface NavItem {
   label: string;
@@ -59,6 +64,8 @@ export default function Layout({ children }: { children: ReactNode }) {
   const location = useLocation();
   const navigate = useNavigate();
   const { data: lowStockItems } = useLowStock();
+  const compactMode = useUIStore((s) => s.compactMode);
+  const toggleCompactMode = useUIStore((s) => s.toggleCompactMode);
   const lowStockCount = lowStockItems?.length ?? 0;
 
   // Close sidebar on route change
@@ -173,8 +180,35 @@ export default function Layout({ children }: { children: ReactNode }) {
               </h1>
             </div>
 
-            {/* RIGHT: theme toggle + user dropdown */}
+            {/* RIGHT: search + notifications + theme toggle + user dropdown */}
             <div className="flex items-center space-x-2 sm:space-x-3">
+              {/* #4 - Global Search trigger */}
+              <button
+                onClick={() => document.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', ctrlKey: true }))}
+                className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 text-sm hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+              >
+                <Search size={14} />
+                <span className="text-xs">Buscar...</span>
+                <kbd className="text-[10px] px-1 py-0.5 bg-gray-200 dark:bg-gray-600 rounded">Ctrl+K</kbd>
+              </button>
+
+              {/* #15 - Compact Mode Toggle */}
+              <button
+                type="button"
+                onClick={toggleCompactMode}
+                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                title={compactMode ? 'Vista normal' : 'Vista compacta'}
+              >
+                {compactMode ? (
+                  <LayoutDashboard size={20} className="text-blue-500" />
+                ) : (
+                  <ClipboardList size={20} className="text-gray-600 dark:text-gray-300" />
+                )}
+              </button>
+
+              {/* #1 - Notification Bell */}
+              <NotificationBell />
+
               <button
                 onClick={toggleTheme}
                 className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
@@ -336,9 +370,13 @@ export default function Layout({ children }: { children: ReactNode }) {
         </aside>
 
         {/* Main content */}
-        <main className="flex-1 transition-all duration-300">
+        <main className={`flex-1 transition-all duration-300 ${compactMode ? 'compact-mode' : ''}`}>
+          <OnboardingTooltip pathname={location.pathname} />
           {children}
         </main>
+
+        {/* #4 - Global Search Modal */}
+        <GlobalSearch />
       </div>
     </div>
   );

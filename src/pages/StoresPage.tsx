@@ -1,16 +1,20 @@
-import { useState } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import { Box, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Pencil, Trash2 } from 'lucide-react';
+import { Pencil, Trash2, Map, BarChart3 } from 'lucide-react';
 import PageHeader from '../components/common/PageHeader';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import ConfirmDialog from '../components/common/ConfirmDialog';
 import EmptyState from '../components/common/EmptyState';
 import ResponsiveTable, { Column } from '../components/common/ResponsiveTable';
+import StoreComparator from '../components/common/StoreComparator';
 import { useStores, useCreateStore, useUpdateStore, useDeleteStore } from '../hooks/useStores';
+import { usePurchases } from '../hooks/usePurchases';
 import { Store, CreateStoreDto } from '../types/store.types';
+
+const StoreMap = lazy(() => import('../components/common/StoreMap'));
 
 const storeSchema = z.object({
   name: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),
@@ -33,6 +37,9 @@ export default function StoresPage() {
   const [editingStore, setEditingStore] = useState<Store | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [storeToDelete, setStoreToDelete] = useState<string | null>(null);
+  const [showMap, setShowMap] = useState(false);
+  const [showComparator, setShowComparator] = useState(false);
+  const { data: purchases } = usePurchases();
 
   const { control, handleSubmit, reset, formState: { errors } } = useForm<StoreFormData>({
     resolver: zodResolver(storeSchema),
@@ -171,7 +178,42 @@ export default function StoresPage() {
         subtitle="Gestiona las tiendas donde realizas tus compras"
         actionLabel="Nueva tienda"
         onAction={handleOpenCreate}
-      />
+      >
+        <div className="flex gap-2">
+          <Button
+            variant="outlined"
+            startIcon={<Map size={16} />}
+            onClick={() => setShowMap(!showMap)}
+            size="small"
+          >
+            {showMap ? 'Ocultar mapa' : 'Ver mapa'}
+          </Button>
+          <Button
+            variant="outlined"
+            startIcon={<BarChart3 size={16} />}
+            onClick={() => setShowComparator(!showComparator)}
+            size="small"
+          >
+            Comparar
+          </Button>
+        </div>
+      </PageHeader>
+
+      {/* #19 - Store Map */}
+      {showMap && stores && stores.length > 0 && (
+        <div className="mb-6">
+          <Suspense fallback={<div className="h-80 bg-gray-100 dark:bg-gray-700 rounded-xl animate-pulse" />}>
+            <StoreMap stores={stores} />
+          </Suspense>
+        </div>
+      )}
+
+      {/* #5 - Store Comparator */}
+      {showComparator && stores && stores.length >= 2 && purchases && (
+        <div className="mb-6">
+          <StoreComparator stores={stores} purchases={purchases} />
+        </div>
+      )}
 
       {stores && stores.length > 0 ? (
         <ResponsiveTable

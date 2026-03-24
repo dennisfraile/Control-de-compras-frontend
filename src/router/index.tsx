@@ -255,4 +255,17 @@ const router = createBrowserRouter([
   },
 ]);
 
+// #21 - Prefetch most visited routes after initial load
+if (typeof window !== 'undefined') {
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      import('../pages/DashboardPage');
+      import('../pages/PurchasesPage');
+      import('../pages/ShoppingListPage');
+      import('../pages/InventoryPage');
+      import('../pages/ProductsPage');
+    }, 2000);
+  });
+}
+
 export default router;

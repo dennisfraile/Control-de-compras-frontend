@@ -10,13 +10,27 @@ export function useShoppingList() {
   });
 }
 
+// #22 - Optimistic updates for toggle
 export function useToggleShoppingItem() {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: ({ id, isChecked }: { id: string; isChecked: boolean }) =>
       shoppingListApi.toggleChecked(id, isChecked),
-    onSuccess: () => {
+    onMutate: async ({ id, isChecked }) => {
+      await queryClient.cancelQueries({ queryKey: [QUERY_KEYS.shoppingList] });
+      const previous = queryClient.getQueryData([QUERY_KEYS.shoppingList]);
+      queryClient.setQueryData<any[]>([QUERY_KEYS.shoppingList], (old) =>
+        old?.map((item) => (item.productId === id || item.id === id ? { ...item, isChecked } : item))
+      );
+      return { previous };
+    },
+    onError: (_err, _vars, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData([QUERY_KEYS.shoppingList], context.previous);
+      }
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.shoppingList] });
     },
   });

@@ -2,14 +2,14 @@ import { Box, Button } from '@mui/material';
 import { FileDownload as FileDownloadIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import { Pencil, Trash2, Eye } from 'lucide-react';
+import { Pencil, Trash2, Eye, Copy } from 'lucide-react';
 import PageHeader from '../components/common/PageHeader';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import EmptyState from '../components/common/EmptyState';
 import ConfirmDialog from '../components/common/ConfirmDialog';
 import DependencyBanner from '../components/onboarding/DependencyBanner';
 import ResponsiveTable, { Column } from '../components/common/ResponsiveTable';
-import { usePurchases, useDeletePurchase } from '../hooks/usePurchases';
+import { usePurchases, useDeletePurchase, useCreatePurchase } from '../hooks/usePurchases';
 import { useStores } from '../hooks/useStores';
 import { useProducts } from '../hooks/useProducts';
 import { purchasesApi } from '../api/purchases.api';
@@ -20,6 +20,7 @@ export default function PurchasesPage() {
   const navigate = useNavigate();
   const { data: purchases, isLoading } = usePurchases();
   const deletePurchase = useDeletePurchase();
+  const createPurchase = useCreatePurchase();
   const { data: stores } = useStores();
   const { data: products } = useProducts();
   const hasStores = (stores?.length ?? 0) > 0;
@@ -28,6 +29,30 @@ export default function PurchasesPage() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [purchaseToDelete, setPurchaseToDelete] = useState<string | null>(null);
   const [exporting, setExporting] = useState(false);
+  const [duplicating, setDuplicating] = useState(false);
+
+  // #3 - Duplicate purchase
+  const handleDuplicate = (purchase: Purchase) => {
+    if (duplicating || !purchase.items?.length) return;
+    setDuplicating(true);
+    createPurchase.mutate(
+      {
+        storeId: purchase.storeId,
+        purchaseDateUtc: new Date().toISOString(),
+        notes: `Copia de compra del ${new Date(purchase.purchaseDateUtc).toLocaleDateString('es')}`,
+        items: purchase.items.map((item) => ({
+          productId: item.productId,
+          quantity: item.quantity,
+          unitTypeId: item.unitTypeId,
+          unitPrice: item.unitPrice,
+          addToInventory: false,
+        })),
+      },
+      {
+        onSettled: () => setDuplicating(false),
+      },
+    );
+  };
 
   const handleExport = async () => {
     try {
@@ -104,6 +129,14 @@ export default function PurchasesPage() {
         <Eye size={18} className="text-green-600" />
       </button>
       <button
+        onClick={() => handleDuplicate(row)}
+        disabled={duplicating}
+        className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
+        title="Repetir compra"
+      >
+        <Copy size={18} className="text-purple-600" />
+      </button>
+      <button
         onClick={() => navigate(`/purchases/${row.id}/edit`)}
         className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
         title="Editar"
@@ -133,6 +166,19 @@ export default function PurchasesPage() {
           <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
             {formatDate(purchase.purchaseDateUtc)} · {formatCurrency(purchase.totalAmount)}
           </div>
+          {/* #10 - Tags */}
+          {purchase.tags && (
+            <div className="flex flex-wrap gap-1 mt-2">
+              {purchase.tags.split(',').map((tag) => (
+                <span
+                  key={tag.trim()}
+                  className="text-[10px] px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 font-medium"
+                >
+                  {tag.trim()}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
         <div className="flex items-center gap-1 ml-2 shrink-0">
           {purchaseActions(purchase)}

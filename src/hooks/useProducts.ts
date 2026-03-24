@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSnackbar } from 'notistack';
-import { productsApi } from '../api/products.api';
+import { productsApi, toggleFavorite, getFavorites } from '../api/products.api';
 import { CreateProductDto, UpdateProductDto } from '../types/product.types';
 import { QUERY_KEYS } from '../utils/constants';
 
@@ -8,6 +8,7 @@ export function useProducts() {
   return useQuery({
     queryKey: [QUERY_KEYS.products],
     queryFn: productsApi.getAll,
+    staleTime: 15 * 60 * 1000, // 15 minutes - products rarely change
   });
 }
 
@@ -64,6 +65,31 @@ export function useDeleteProduct() {
     },
     onError: () => {
       enqueueSnackbar('Error al eliminar el producto', { variant: 'error' });
+    },
+  });
+}
+
+// #7 - Favorites
+export function useFavorites() {
+  return useQuery({
+    queryKey: [QUERY_KEYS.products, 'favorites'],
+    queryFn: getFavorites,
+    staleTime: 10 * 60 * 1000,
+  });
+}
+
+export function useToggleFavorite() {
+  const queryClient = useQueryClient();
+  const { enqueueSnackbar } = useSnackbar();
+
+  return useMutation({
+    mutationFn: (productId: string) => toggleFavorite(productId),
+    onSuccess: (data: any) => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.products, 'favorites'] });
+      enqueueSnackbar(
+        data?.isFavorited ? 'Agregado a favoritos' : 'Removido de favoritos',
+        { variant: 'info', autoHideDuration: 1500 },
+      );
     },
   });
 }

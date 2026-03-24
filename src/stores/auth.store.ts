@@ -29,13 +29,18 @@ export const useAuthStore = create<AuthState>()(
           isAuthenticated: true,
         }),
 
-      logout: () =>
+      logout: () => {
         set({
           accessToken: null,
           refreshToken: null,
           user: null,
           isAuthenticated: false,
-        }),
+        });
+        // Clear service worker API cache on logout
+        if ('caches' in window) {
+          caches.delete('api-cache').catch(() => {});
+        }
+      },
 
       setToken: (accessToken: string) =>
         set({ accessToken }),

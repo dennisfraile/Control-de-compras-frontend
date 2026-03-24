@@ -1,10 +1,12 @@
+import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { ArrowLeft, TrendingUp, TrendingDown, Minus, DollarSign, Store, Calendar, Scale } from 'lucide-react';
+import { ArrowLeft, TrendingUp, TrendingDown, Minus, DollarSign, Store, Calendar, Scale, BarChart2 } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { getPriceDetail } from '../api/products.api';
 import { formatCurrency, formatDate } from '../utils/format';
 import { useThemeContext } from '../context/ThemeContext';
+import ConsumptionHistoryChart from '../components/common/ConsumptionHistoryChart';
 
 interface PriceDetailResponse {
   productName: string;
@@ -27,6 +29,8 @@ export default function ProductPriceDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { theme } = useThemeContext();
+
+  const [showConsumption, setShowConsumption] = useState(false);
 
   const { data, isLoading, isError } = useQuery<PriceDetailResponse>({
     queryKey: ['priceDetail', id],
@@ -80,6 +84,8 @@ export default function ProductPriceDetailPage() {
         {/* Back button + title */}
         <div className="flex items-center gap-3 mb-6">
           <button
+            type="button"
+            title="Volver"
             onClick={() => navigate(-1)}
             className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
           >
@@ -229,6 +235,26 @@ export default function ProductPriceDetailPage() {
               <p className="text-center text-gray-500 dark:text-gray-400 py-8">No hay registros de compra.</p>
             )}
           </div>
+        </div>
+
+        {/* #2 - Consumption History */}
+        <div className="mt-6">
+          {!showConsumption ? (
+            <button
+              type="button"
+              onClick={() => setShowConsumption(true)}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors shadow-sm"
+            >
+              <BarChart2 size={16} />
+              Ver historial de consumo
+            </button>
+          ) : (
+            <ConsumptionHistoryChart
+              productId={id!}
+              productName={data.productName}
+              onClose={() => setShowConsumption(false)}
+            />
+          )}
         </div>
       </div>
     </div>

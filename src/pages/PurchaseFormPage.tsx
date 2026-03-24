@@ -32,12 +32,15 @@ const purchaseItemSchema = z.object({
   notes: z.string().optional(),
 });
 
+const PURCHASE_TAGS = ['despensa', 'quincenal', 'emergencia', 'fiesta', 'semanal', 'mensual', 'oferta'];
+
 const purchaseSchema = z.object({
   storeId: z.string().min(1, 'Selecciona una tienda'),
   purchaseDate: z.custom<Dayjs>((val) => dayjs.isDayjs(val) && val.isValid(), {
     message: 'Fecha requerida',
   }),
   notes: z.string().optional(),
+  tags: z.string().optional(),
   items: z.array(purchaseItemSchema).min(1, 'Agrega al menos un producto'),
 });
 
@@ -66,6 +69,7 @@ export default function PurchaseFormPage() {
       storeId: '',
       purchaseDate: dayjs(),
       notes: '',
+      tags: '',
       items: [{ productId: '', quantity: 1, unitPrice: 0, notes: '' }],
     },
   });
@@ -81,6 +85,7 @@ export default function PurchaseFormPage() {
         storeId: existingPurchase.storeId,
         purchaseDate: dayjs(existingPurchase.purchaseDateUtc),
         notes: existingPurchase.notes ?? '',
+        tags: existingPurchase.tags ?? '',
         items: existingPurchase.items.map((item) => ({
           productId: item.productId,
           quantity: item.quantity,
@@ -104,6 +109,7 @@ export default function PurchaseFormPage() {
       storeId: data.storeId,
       purchaseDateUtc: data.purchaseDate.toISOString(),
       notes: data.notes || undefined,
+      tags: data.tags || undefined,
       items: data.items.map((item) => ({
         productId: item.productId,
         quantity: Number(item.quantity),
@@ -190,6 +196,44 @@ export default function PurchaseFormPage() {
                     label="Notas"
                     sx={{ flexGrow: 1, minWidth: { xs: 0, sm: 200 }, width: { xs: '100%', md: 'auto' } }}
                   />
+                )}
+              />
+            </Box>
+
+            {/* #10 - Tags */}
+            <Box sx={{ mt: 2 }}>
+              <Typography variant="body2" sx={{ mb: 1, color: 'text.secondary' }}>
+                Etiquetas
+              </Typography>
+              <Controller
+                name="tags"
+                control={control}
+                render={({ field }) => (
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                    {PURCHASE_TAGS.map((tag) => {
+                      const selected = (field.value || '').split(',').map((t: string) => t.trim()).includes(tag);
+                      return (
+                        <button
+                          key={tag}
+                          type="button"
+                          onClick={() => {
+                            const current = (field.value || '').split(',').map((t: string) => t.trim()).filter(Boolean);
+                            const next = selected
+                              ? current.filter((t: string) => t !== tag)
+                              : [...current, tag];
+                            field.onChange(next.join(', '));
+                          }}
+                          className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                            selected
+                              ? 'bg-blue-600 text-white'
+                              : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                          }`}
+                        >
+                          {tag}
+                        </button>
+                      );
+                    })}
+                  </Box>
                 )}
               />
             </Box>

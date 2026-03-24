@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSnackbar } from 'notistack';
 import { inventoryApi } from '../api/inventory.api';
 import {
+  InventoryEntry,
   CreateInventoryEntryDto,
   UpdateInventoryEntryDto,
 } from '../types/inventory.types';
@@ -83,6 +84,38 @@ export function useDeleteInventoryEntry() {
       enqueueSnackbar('Error al eliminar entrada de inventario', {
         variant: 'error',
       });
+    },
+  });
+}
+
+// #22 - Optimistic quick consume
+export function useQuickConsume() {
+  const queryClient = useQueryClient();
+  const { enqueueSnackbar } = useSnackbar();
+
+  return useMutation({
+    mutationFn: ({ productId, quantity }: { productId: string; quantity: number }) =>
+      inventoryApi.quickConsume(productId, quantity),
+    onMutate: async ({ productId, quantity }) => {
+      await queryClient.cancelQueries({ queryKey: [QUERY_KEYS.inventory] });
+      const previous = queryClient.getQueryData<InventoryEntry[]>([QUERY_KEYS.inventory]);
+      queryClient.setQueryData<InventoryEntry[]>([QUERY_KEYS.inventory], (old) =>
+        old?.map((entry) =>
+          entry.productId === productId
+            ? { ...entry, currentQuantity: Math.max(0, entry.currentQuantity - quantity) }
+            : entry
+        )
+      );
+      return { previous };
+    },
+    onError: (_err, _vars, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData([QUERY_KEYS.inventory], context.previous);
+      }
+      enqueueSnackbar('Error al consumir producto', { variant: 'error' });
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.inventory] });
     },
   });
 }
